@@ -1,8 +1,9 @@
 import sys
 import os
-import numpy as np
 import time
 import datetime
+
+import numpy as np
 
 import feature_extraction_scripts.organize_speech_data as orgdata
 import feature_extraction_scripts.feature_extraction_functions as featfun
@@ -17,7 +18,9 @@ def get_date():
 
 def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=False,timesteps=None,context_window=None,noise_path=None,limit=None):
     #set defaults:
-    if num_filters is None:
+    if num_filters is None and feature_type == "stft":
+        num_filters = 201
+    elif num_filters is None and feature_type != "stft":
         num_filters = 40
     if timesteps is None:
         timesteps = 5
@@ -52,7 +55,8 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
     * are typical GitHub files, like LICENSE
     '''
     try:
-        
+        print("\nFeatures being collected: {}".format(feature_type.upper()))
+        print("\nTotal number of feature columns: {}".format(num_features))
         labels_class = orgdata.collect_labels(data_path)
         labels_print = ""
         for i in range(len(labels_class)):
@@ -171,17 +175,20 @@ if __name__=="__main__":
     #which directory has the data?
     data_path = "./data"
     #should there be a limit on how many waves are processed?
-    limit = .05 #False or fraction of data to be extracted
+    limit = .05 # Options: False or fraction of data to be extracted
     #which type of features to extract?
-    feature_type = "fbank" # "mfcc" TO DEBUG: "stft"
-    #number of filters or coefficients?
-    num_filters = 40 # 13, None
+    feature_type = "stft" # "mfcc" "fbank" "stft"
+    #number of filters or coefficients? If STFT, doesn't matter.. can put None
+    num_filters = None # Options: 40, 20, 13, None
     delta = False # Calculate the 1st and 2nd derivatives of features?
     noise = True # Add noise to speech data?
     vad = True #voice activity detection
     timesteps = 5
     context_window = 5
-    noise_path = "./data/_background_noise_/doing_the_dishes.wav" # None
+    #If noise == True, put the pathway to that noise here:
+    #this path is a noise wave from the Speech Commands Dataset
+    #If noise == False, put 'None'
+    noise_path = "./data/_background_noise_/doing_the_dishes.wav" 
 
     main(
         data_path,feature_type,

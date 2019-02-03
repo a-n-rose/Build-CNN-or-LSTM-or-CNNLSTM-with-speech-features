@@ -85,14 +85,14 @@ def get_feats(wavefile,feature_type,num_features,head_folder,delta=False,noise_w
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
-    ###!!!!!!! Need to Debug..
-    #elif "stft" in feature_type.lower():
-        #extracted.append("stft")
-        #features = get_stft(y,sr)
-        #features -= (np.mean(features, axis=0) + 1e-8)
-        #if delta:
-            #delta, delta_delta = get_change_acceleration_rate(features)
-            #features = np.concatenate((features,delta,delta_delta),axis=1)
+    ##!!!!!!! Need to Debug..
+    elif "stft" in feature_type.lower():
+        extracted.append("stft")
+        features = get_stft(y,sr)
+        features -= (np.mean(features, axis=0) + 1e-8)
+        if delta:
+            delta, delta_delta = get_change_acceleration_rate(features)
+            features = np.concatenate((features,delta,delta_delta),axis=1)
     if features.shape[1] != num_feature_columns: 
         raise FeatureExtractionError("The file '{}' results in the incorrect  number of columns (should be {} columns): shape {}".format(wavefile,num_features,features.shape))
     
@@ -166,7 +166,7 @@ def get_stft(y,sr,window_size=None, window_shift=None):
         hop_length = int(0.010*sr)
     else:
         hop_length = int(window_shift*0.001*sr)
-    stft = np.abs(librosa.feature.stft(y,sr,n_fft=n_fft,hop_length=hop_length)) #comes in complex numbers.. have to take absolute value
+    stft = np.abs(librosa.stft(y,n_fft=n_fft,hop_length=hop_length)) #comes in complex numbers.. have to take absolute value
     stft = np.transpose(stft)
     
     return stft
