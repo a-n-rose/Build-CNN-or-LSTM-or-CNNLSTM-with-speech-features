@@ -29,17 +29,16 @@ As it is, the script 'extract_features.py' will extract only 5% of all the speec
 This should print out something like this when it's done:
 
 ```
-TO TRAIN A MODEL, COPY AND PASTE THE FOLLOWING INTO THE MODEL TRAINING SCRIPT:
+FOLDER NAME TO COPY AND PASTE FOR THE TRAINING SCRIPT:
 
 
-features_and_models_2019y2m2d22h6m19s
-
+features_and_models_20h32m31s
 
 ```
 
 Note: If you come accross the following error: `fontconfig warning ignoring utf-8 not a valid-region tag`, see [here](https://stackoverflow.com/questions/24712158/how-to-solve-imagemagicks-fontconfig-warning-ignoring-utf-8-not-a-valid-regi) for a potential solution.
 
-This is just a folder name with a unique time stamp. Copy this from your command line, by highlighting it and pressing ctrl+shift+C. When you run the 'train_models_CNN_LSTM_CNNLSTM.py' script, it will prompt you to enter the folder with the prepared data. Simply paste this folder name there by pressing ctrl+shift+V.
+This is just a folder name with a unique time stamp. When you run the 'train_models_CNN_LSTM_CNNLSTM.py' script, it will prompt you to enter the folder with the prepared data. Simply paste this folder name there.
 
 ```
 (env)..$ python3 train_models_CNN_LSTM_CNNLSTM.py
@@ -58,7 +57,7 @@ Press ENTER and it should start training! As is, the script should take appx. 4 
 Once the scripts are through, you can look through the newly created files in your directory. You should see 'ml_speech_projects'. If you look in that folder, you will see a folder for each time you extracted features. It will have a name similar to this one:
 
 ```
-features_and_models_2019y2m2d22h6m19s
+features_and_models_20h32m31s
 ```
 
 Inside of that folder you will find all of the train, validation, and train datasets, a folder showing graphs of how the model trained, the label the labels were encoded as, and other information as well.
