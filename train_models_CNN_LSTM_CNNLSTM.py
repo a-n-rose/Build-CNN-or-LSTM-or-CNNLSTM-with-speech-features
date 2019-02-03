@@ -26,7 +26,7 @@ import model_scripts.build_model as build
 #include their names with a timestamp
 def get_date():
     time = datetime.datetime.now()
-    time_str = "{}h{}m{}s".format(time.hour,time.minute,time.second)
+    time_str = "{}d{}h{}m{}s".format(time.day,time.hour,time.minute,time.second)
     return(time_str)
 
 def main(model_type,epochs,optimizer,sparse_targets,patience=None):
@@ -47,9 +47,9 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     #create folders to store models, logs, and graphs
     graphs_folder = head_folder_curr_project+"/graphs"
     models_folder =  head_folder_curr_project+"/models"
-    model_log_folder = head_folder_curr_project+"/"
+    model_log_folder = head_folder_curr_project+"/model_logs"
     
-    for folder in [graphs_folder,models_folder]:
+    for folder in [graphs_folder,models_folder,model_log_folder]:
         if not os.path.exists(folder):
             os.makedirs(folder)
     
@@ -211,7 +211,7 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     parameters["test acc"] = acc
     parameters["test loss"] = loss
     #save in csv file
-    with open('{}model_info.csv'.format(model_log_folder),'a',newline='') as f:
+    with open('{}/{}.csv'.format(model_log_folder,modelname),'w',newline='') as f:
         w = csv.writer(f)
         w.writerows(parameters.items())
     
