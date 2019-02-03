@@ -40,7 +40,7 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
     start = time.time()
     time_stamp = get_date()
     head_folder_beg = "./ml_speech_projects/"
-    curr_folder = "features_and_models_{}".format(time_stamp)
+    curr_folder = "{}_models_{}".format(feature_type,time_stamp)
     head_folder = head_folder_beg+curr_folder
     #create folder to store all data (encoded labels, features)
     if not os.path.exists(head_folder):
