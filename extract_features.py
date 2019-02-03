@@ -16,7 +16,7 @@ def get_date():
     time_str = "{}h{}m{}s".format(time.hour,time.minute,time.second)
     return(time_str)
 
-def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=False,timesteps=None,context_window=None,noise_path=None,limit=None):
+def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,noise=False,vad=False,timesteps=None,context_window=None,noise_path=None,limit=None):
     #set defaults:
     if num_filters is None and feature_type == "stft":
         num_filters = 201
@@ -27,9 +27,12 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
     if context_window is None:
         context_window = 5
     if delta:
-        num_features = num_filters * 3
+        num_feature_columns = num_filters * 3
     else:
-        num_features = num_filters
+        num_feature_columns = num_filters
+    if dom_freq is not False:
+        num_feature_columns += 1
+
     #frame_width is the sum of frames including:
     #1 central frame with a context window in front and one context window behind
     frame_width = context_window*2 + 1
@@ -56,7 +59,7 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
     '''
     try:
         print("\nFeatures being collected: {}".format(feature_type.upper()))
-        print("\nTotal number of feature columns: {}".format(num_features))
+        print("\nTotal number of feature columns: {}".format(num_feature_columns))
         labels_class = orgdata.collect_labels(data_path)
         labels_print = ""
         for i in range(len(labels_class)):
@@ -104,7 +107,7 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
         max_num_per_class, class_max_samps = orgdata.get_max_samples_per_class(labels_class,labels_wavefile)
         
         #LOG THE SETTINGS OF FEATURE EXTRACTION IN CSV FILE
-        dict_info_feature_extraction = {"data path":data_path,"limit":limit,"features":feature_type,"num original features":num_filters,"num total features":num_features,"delta":delta,"noise":noise,"beginning silence removal":vad,"timesteps":timesteps,"context window":context_window,"num classes":len(labels_class),"time stamp":time_stamp}
+        dict_info_feature_extraction = {"data path":data_path,"limit":limit,"features":feature_type,"num original features":num_filters,"num total features":num_feature_columns,"delta":delta,"dominant frequency":dom_freq,"noise":noise,"beginning silence removal":vad,"timesteps":timesteps,"context window":context_window,"num classes":len(labels_class),"time stamp":time_stamp}
         orgdata.log_extraction_settings(dict_info_feature_extraction,head_folder)
         orgdata.log_class4balance(max_num_per_class,class_max_samps,head_folder)
         '''
@@ -146,7 +149,7 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
         for i in range(3):
             dataset_index = i   # 0 = train, 1 = validation, 2 = test
             
-            extraction_completed = featfun.save_feats2npy(labels_class,dict_labels_encoded,train_val_test_filenames[dataset_index],max_nums_train_val_test[dataset_index],dict_class_dataset_index_list,paths,labels_wavefile,feature_type,num_filters,num_features,timesteps,frame_width,head_folder,limit=limit,delta=delta,noise_wavefile=noise_path,vad=vad,dataset_index=dataset_index)
+            extraction_completed = featfun.save_feats2npy(labels_class,dict_labels_encoded,train_val_test_filenames[dataset_index],max_nums_train_val_test[dataset_index],dict_class_dataset_index_list,paths,labels_wavefile,feature_type,num_filters,num_feature_columns,timesteps,frame_width,head_folder,limit=limit,delta=delta,dom_freq=dom_freq,noise_wavefile=noise_path,vad=vad,dataset_index=dataset_index)
             
             if extraction_completed:
                 print("\nRound {} feature extraction successful.\n".format(i+1))
@@ -162,7 +165,8 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
         
         return True
     
-    except FeatureExtractionFail:
+    except FeatureExtractionFail as e:
+        print(e)
         print("Feature Extraction Error. Terminated feature extraction process.")
         pass
     
@@ -177,10 +181,11 @@ if __name__=="__main__":
     #should there be a limit on how many waves are processed?
     limit = .05 # Options: False or fraction of data to be extracted
     #which type of features to extract?
-    feature_type = "stft" # "mfcc" "fbank" "stft"
+    feature_type = "mfcc" # "mfcc" "fbank" "stft"
     #number of filters or coefficients? If STFT, doesn't matter.. can put None
     num_filters = None # Options: 40, 20, 13, None
     delta = False # Calculate the 1st and 2nd derivatives of features?
+    dom_freq = True # Basically... Pitch (dominant frequency)
     noise = True # Add noise to speech data?
     vad = True #voice activity detection
     timesteps = 5
@@ -192,6 +197,6 @@ if __name__=="__main__":
 
     main(
         data_path,feature_type,
-        num_filters=num_filters,delta=delta,noise=noise,vad=vad,
+        num_filters=num_filters,delta=delta,noise=noise,vad=vad,dom_freq=dom_freq,
         timesteps=timesteps,context_window=context_window,noise_path=noise_path,limit = limit
         )

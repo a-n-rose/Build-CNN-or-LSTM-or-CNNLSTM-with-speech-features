@@ -13,7 +13,7 @@ import random
 
 #my own speech prep: voice activity detection
 import feature_extraction_scripts.prep_noise as prep_data_vad_noise
-from feature_extraction_scripts.errors import NoSpeechDetected, LimitTooSmall
+from feature_extraction_scripts.errors import NoSpeechDetected, LimitTooSmall,FeatureExtractionFail
 
  
  
@@ -46,7 +46,7 @@ def apply_noise(y,sr,wavefile):
     return y
 
 
-def get_feats(wavefile,feature_type,num_features,head_folder,delta=False,noise_wavefile = None,vad = False):
+def get_feats(wavefile,feature_type,num_features,num_feature_columns,head_folder,delta=False,dom_freq=False,noise_wavefile = None,vad = False):
     y, sr = get_samps(wavefile)
 
     if vad:
@@ -65,10 +65,6 @@ def get_feats(wavefile,feature_type,num_features,head_folder,delta=False,noise_w
             
     if noise_wavefile:
         y = apply_noise(y,sr,noise_wavefile)
-    if delta:
-        num_feature_columns = num_features*3
-    else:
-        num_feature_columns = num_features
         
     extracted = []
     if "mfcc" in feature_type.lower():
@@ -85,7 +81,6 @@ def get_feats(wavefile,feature_type,num_features,head_folder,delta=False,noise_w
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
-    ##!!!!!!! Need to Debug..
     elif "stft" in feature_type.lower():
         extracted.append("stft")
         features = get_stft(y,sr)
@@ -93,8 +88,12 @@ def get_feats(wavefile,feature_type,num_features,head_folder,delta=False,noise_w
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
+    if dom_freq:
+        dom_freq = get_domfreq(y,sr)
+        dom_freq = dom_freq.reshape((dom_freq.shape+(1,)))
+        features = np.concatenate((features,dom_freq),axis=1)
     if features.shape[1] != num_feature_columns: 
-        raise FeatureExtractionError("The file '{}' results in the incorrect  number of columns (should be {} columns): shape {}".format(wavefile,num_features,features.shape))
+        raise FeatureExtractionFail("The file '{}' results in the incorrect  number of columns (should be {} columns): shape {}".format(wavefile,num_features,features.shape))
     
     return features
     
@@ -173,12 +172,15 @@ def get_stft(y,sr,window_size=None, window_shift=None):
 
 
 def get_domfreq(y,sr):
+    '''
+    collecting the frequencies with highest magnitude
+    '''
     frequencies, magnitudes = get_freq_mag(y,sr)
     #select only frequencies with largest magnitude, i.e. dominant frequency
     dom_freq_index = [np.argmax(item) for item in magnitudes]
     dom_freq = [frequencies[i][item] for i,item in enumerate(dom_freq_index)]
     
-    return dom_freq
+    return np.array(dom_freq)
 
 
 def get_freq_mag(y,sr,window_size=None, window_shift=None):
@@ -203,7 +205,7 @@ def get_freq_mag(y,sr,window_size=None, window_shift=None):
     return frequencies, magnitudes
 
 
-def save_feats2npy(labels_class,dict_labels_encoded,data_filename4saving,max_num_samples,dict_class_dataset_index_list,paths_list,labels_list,feature_type,num_filters,num_features,time_step,frame_width,head_folder,limit=None,delta=False,noise_wavefile=None,vad=False,dataset_index=None):
+def save_feats2npy(labels_class,dict_labels_encoded,data_filename4saving,max_num_samples,dict_class_dataset_index_list,paths_list,labels_list,feature_type,num_filters,num_feature_columns,time_step,frame_width,head_folder,limit=None,delta=False,dom_freq=False,noise_wavefile=None,vad=False,dataset_index=None):
     if dataset_index is None:
         dataset_index = 0
 
@@ -214,9 +216,8 @@ def save_feats2npy(labels_class,dict_labels_encoded,data_filename4saving,max_num
     else:
         expected_rows = max_num_samples*len(labels_class)*frame_width*time_step
     
-    feats_matrix = np.zeros((expected_rows,num_features+1)) # +1 for the label
+    feats_matrix = np.zeros((expected_rows,num_feature_columns+1)) # +1 for the label
     #go through all data in dataset and fill in the matrix
-    
     
     msg = "\nFeature Extraction: Section {} of 3\nNow extracting features: {} wavefiles per class.\nWith {} classes, processing {} wavefiles.\nFeatures will be saved in the file {}.npy\n\n".format(dataset_index+1,max_num_samples,len(labels_class),len(labels_class)*max_num_samples,data_filename4saving)
     print(msg)
@@ -246,7 +247,7 @@ def save_feats2npy(labels_class,dict_labels_encoded,data_filename4saving,max_num
                 wav_curr = wav_label[0]
                 label_curr = wav_label[1]
                 label_encoded = dict_labels_encoded[label_curr]
-                feats = coll_feats_manage_timestep(time_step,frame_width,wav_curr,feature_type,num_filters,head_folder,delta=delta, noise_wavefile=noise_wavefile,vad = vad)
+                feats = coll_feats_manage_timestep(time_step,frame_width,wav_curr,feature_type,num_filters,num_feature_columns,head_folder,delta=delta,dom_freq=dom_freq, noise_wavefile=noise_wavefile,vad = vad)
                 #add label column:
                 label_col = np.full((feats.shape[0],1),label_encoded)
                 feats = np.concatenate((feats,label_col),axis=1)
@@ -270,8 +271,8 @@ def save_feats2npy(labels_class,dict_labels_encoded,data_filename4saving,max_num
     return completed
     
     
-def coll_feats_manage_timestep(time_step,frame_width,wav,feature_type,num_filters,head_folder,delta=False,noise_wavefile=None,vad = True):
-    feats = get_feats(wav,feature_type,num_filters,head_folder,delta=delta,noise_wavefile=noise_wavefile,vad = vad)
+def coll_feats_manage_timestep(time_step,frame_width,wav,feature_type,num_filters,num_feature_columns,head_folder,delta=False,dom_freq=False,noise_wavefile=None,vad = True):
+    feats = get_feats(wav,feature_type,num_filters,num_feature_columns,head_folder,delta=delta,dom_freq=dom_freq,noise_wavefile=noise_wavefile,vad = vad)
     max_len = frame_width*time_step
     if feats.shape[0] < max_len:
         diff = max_len - feats.shape[0]
