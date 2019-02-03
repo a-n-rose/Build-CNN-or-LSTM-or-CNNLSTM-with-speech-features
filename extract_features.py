@@ -153,7 +153,7 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
         end_feature_extraction = time.time()
         print("Duration of feature extraction: {} minutes".format(round((end_feature_extraction-start_feature_extraction)/60,2)))
     
-        print("\nTo train a model, copy and paste the following into the model training script:".upper())
+        print("\nFolder name to copy and paste for the training script:".upper())
         print("\n\n'{}'\n\n".format(curr_folder))
         
         return True
