@@ -12,7 +12,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
-
 # for building and training models
 import keras
 #from keras.models import Sequential
@@ -27,7 +26,7 @@ import model_scripts.build_model as build
 #include their names with a timestamp
 def get_date():
     time = datetime.datetime.now()
-    time_str = "{}y{}m{}d{}h{}m{}s".format(time.year,time.month,time.day,time.hour,time.minute,time.second)
+    time_str = "{}h{}m{}s".format(time.hour,time.minute,time.second)
     return(time_str)
 
 def main(model_type,epochs,optimizer,sparse_targets,patience=None):
@@ -42,7 +41,7 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     
     print("\n\nWhich folder contains the train, validation, and test datasets you would like to train this model on?\n")
     project_head_folder=input()
-    #project_head_folder = "features_and_models_2019y2m2d22h50m24s"
+    #project_head_folder = "features_and_models_22h50m24s"
     
     head_folder_beg = "./ml_speech_projects/"
     head_folder_curr_project = head_folder_beg+project_head_folder
@@ -104,10 +103,9 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     
     #set up "callbacks" which help you keep track of what goes on during training
     #also saves the best version of the model and stops training if learning doesn't improve 
-    checkpoint_name = modelname+"_{}epochs".format(epochs)
     early_stopping_callback = EarlyStopping(monitor='val_loss', patience=patience)
-    csv_logging = CSVLogger(filename='{}/{}_log.csv'.format(model_log_folder,checkpoint_name))
-    checkpoint_callback = ModelCheckpoint('{}/checkpoint_'.format(models_folder)+checkpoint_name+'.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+    csv_logging = CSVLogger(filename='{}/{}_log.csv'.format(model_log_folder,modelname))
+    checkpoint_callback = ModelCheckpoint('{}/checkpoint_'.format(models_folder)+modelname+'.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 
 
     #####################################################################
@@ -150,12 +148,11 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
 
     msg="Model Accuracy on test data: {}%\nModel Loss on test data: {}".format(acc,loss)
     print(msg)
-
-    modelname_final = "{}_{}_{}tr_{}va_{}te_images_{}epochs_{}Optimizer_{}acc".format(modelname,time_stamp,len(train_data),len(val_data),len(test_data),epochs,optimizer,acc)
-    print('Saving Model..')
-    model.save('{}/'.format(models_folder)+modelname_final+'.h5')
+    
+    print("Saving model..")
+    model.save('{}/'.format(models_folder)+modelname+'.h5')
     print('Done!')
-    print("\nModel saved as:\n{}.h5".format(modelname_final))
+    print("\nModel saved as:\n{}.h5".format(models_folder+"/"+modelname))
     
     #####################################################################
     ####### TRY AND SEE WHAT THE HECK WAS GOING ON WHILE TRAINING #######
@@ -170,14 +167,14 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     plt.ylabel("loss")
     plt.xlabel("epoch")
     plt.legend(["train","validation"], loc="upper right")
-    plt.savefig("{}/{}_LOSS.png".format(graphs_folder,modelname_final))
+    plt.savefig("{}/{}_LOSS.png".format(graphs_folder,modelname))
 
     plt.clf()
     plt.plot(history.history['acc'])
     plt.plot(history.history['val_acc'])
     plt.title("train vs validation accuracy")
     plt.legend(["train","validation"], loc="upper right")
-    plt.savefig("{}/{}_ACCURACY.png".format(graphs_folder,modelname_final))
+    plt.savefig("{}/{}_ACCURACY.png".format(graphs_folder,modelname))
     
     end = time.time()
     duration_total = round((end-start)/60,3)
@@ -188,10 +185,12 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     #####################################################################
     ########## KEEP TRACK OF SETTINGS AND THE LOSS/ACCURACY #############
     
+
     #document settings used in model
     parameters = {}
     parameters["model type"] = model_type.lower()
-    parameters["time stamp"] = time_stamp
+    parameters["num training data"] = len(train_data)
+    parameters["epochs"] = epochs
     if "lstm" in model_type.lower():
         parameters["num cells"] = lstm_cells
     if "cnn" in model_type.lower():
@@ -200,6 +199,7 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
         parameters["maxpooling pool size"] = pool_size
         if "cnn" == model_type.lower():
             parameters["dense hidden units"]
+    parameters["optimizer"] = optimizer
     parameters["test acc"] = acc
     parameters["test loss"] = loss
 
