@@ -41,7 +41,6 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     
     print("\n\nWhich folder contains the train, validation, and test datasets you would like to train this model on?\n")
     project_head_folder=input()
-    #project_head_folder = "features_and_models_22h50m24s"
     
     head_folder_beg = "./ml_speech_projects/"
     head_folder_curr_project = head_folder_beg+project_head_folder
@@ -68,6 +67,10 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     num_features = int(feats_dict['num total features'])
     timesteps = int(feats_dict['timesteps'])
     context_window = int(feats_dict['context window'])
+    
+    print("\nInfo about training data:\n".upper())
+    for key, item in feats_dict.items():
+        print(key," : ",item)
     
     frame_width = context_window*2+1
     color_scale = 1 
