@@ -13,7 +13,7 @@ Python offers libraries for audio analysis, <a href="https://librosa.github.io/"
 
 ## Installation
 
-For Installation instructions, see <a href="https://github.com/a-n-rose/speech-recognition-projects/blob/master/speech_commands/INSTALLATION.md">here</a>.
+For Installation instructions, see <a href="https://github.com/a-n-rose/Build-CNN-or-LSTM-or-CNNLSTM-with-speech-features/blob/master/INSTALLATION.md">here</a>.
 
 After you have installed everything, start up your virtual environment:
 
