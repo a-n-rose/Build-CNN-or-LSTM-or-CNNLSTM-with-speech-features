@@ -1,4 +1,3 @@
- 
 ## Extract Speech Features and Train Deep Neural Networks
 
 In this workshop, our goal is to experiment with speech feature extraction and the training of deep neural networks in Python.
@@ -7,9 +6,9 @@ Applying deep learning to the speech signal has many uses. We all know that we c
 
 In much of the research I have read, recurring speech features used in machine and deep learning are the <a href="http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/">Mel Frequency Cepstral Coefficients</a> (MFCC) and the Mel Filterbank Energies (FBANK), which are similar but less filtered than the MFCC.
 
-Additionally, deep learning neural networks I see quite often are the convolutional neural network (CNN) and, for time series analysis, long short-term memory neural networks (LSTM). 
+Additionally, deep learning neural networks I see quite often are the convolutional neural network (CNN) and, for time series analysis, long short-term memory neural networks (LSTM).
 
-Python offers libraries for audio analysis, <a href="https://librosa.github.io/">Librosa</a>, as well as for deep learning, <a href="https://keras.io/">Keras</a>. In this workshop, we will explore speech feature extraction using Librosa and the training of neural networks via Keras. 
+Python offers libraries for audio analysis, <a href="https://librosa.github.io/">Librosa</a>, as well as for deep learning, <a href="https://keras.io/">Keras</a>. In this workshop, we will explore speech feature extraction using Librosa and the training of neural networks via Keras.
 
 ## Installation
 
@@ -20,11 +19,13 @@ After you have installed everything, start up your virtual environment:
 ```
 $ source env/bin/activate
 ```
-As it is, the script 'extract_features.py' will extract only 5% of all the speech data. If you run the script 'as is', this will take appx. 6 minutes to complete. 
+
+As it is, the script 'extract_features.py' will extract only 5% of all the speech data. If you run the script 'as is', this will take appx. 6 minutes to complete.
 
 ```
 (env)..$ python3 extract_features.py
 ```
+
 This should print out something like this when it's done:
 
 ```
@@ -35,10 +36,13 @@ features_and_models_2019y2m2d22h6m19s
 
 
 ```
+
+Note: If you come accross the following error: `fontconfig warning ignoring utf-8 not a valid-region tag`, see [here](https://stackoverflow.com/questions/24712158/how-to-solve-imagemagicks-fontconfig-warning-ignoring-utf-8-not-a-valid-regi) for a potential solution.
+
 This is just a folder name with a unique time stamp. Copy this from your command line, by highlighting it and pressing ctrl+shift+C. When you run the 'train_models_CNN_LSTM_CNNLSTM.py' script, it will prompt you to enter the folder with the prepared data. Simply paste this folder name there by pressing ctrl+shift+V.
 
 ```
-(env)..$ python4 train_models_CNN_LSTM_CNNLSTM.py
+(env)..$ python3 train_models_CNN_LSTM_CNNLSTM.py
 
 Using TensorFlow backend.
 
@@ -49,7 +53,7 @@ features_and_models_2019y2m2d22h6m19s
 
 ```
 
-Press ENTER and it should start training! As is, the script should take appx. 4 minutes. 
+Press ENTER and it should start training! As is, the script should take appx. 4 minutes.
 
 Once the scripts are through, you can look through the newly created files in your directory. You should see 'ml_speech_projects'. If you look in that folder, you will see a folder for each time you extracted features. It will have a name similar to this one:
 
@@ -59,8 +63,7 @@ features_and_models_2019y2m2d22h6m19s
 
 Inside of that folder you will find all of the train, validation, and train datasets, a folder showing graphs of how the model trained, the label the labels were encoded as, and other information as well.
 
-In the workshop we will explore these scripts in detail, and change parameters to see how the training might be affected. Note: due to time constraints, we will not train on the entire dataset in the workshop. You are encouraged to do so at home, perhaps leaving the computer on and train through the night. 
-
+In the workshop we will explore these scripts in detail, and change parameters to see how the training might be affected. Note: due to time constraints, we will not train on the entire dataset in the workshop. You are encouraged to do so at home, perhaps leaving the computer on and train through the night.
 
 ## Future Use
 

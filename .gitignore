@@ -1,3 +1,12 @@
-*__pycache__/ 
-*data/
-*ml_speech_projects/
+# data
+data
+
+# vm
+env
+
+# generated
+ml_speech_projects
+*/__pycache__
+
+# editor files
+.vscode
