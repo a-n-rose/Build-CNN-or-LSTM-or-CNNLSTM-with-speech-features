@@ -13,7 +13,7 @@ from feature_extraction_scripts.errors import FeatureExtractionFail, ExitApp
 #include their names with a timestamp
 def get_date():
     time = datetime.datetime.now()
-    time_str = "{}h{}m{}s".format(time.hour,time.minute,time.second)
+    time_str = "{}d{}h{}m{}s".format(time.day,time.hour,time.minute,time.second)
     return(time_str)
 
 def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,noise=False,vad=False,timesteps=None,context_window=None,noise_path=None,limit=None):
