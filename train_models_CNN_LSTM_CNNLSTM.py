@@ -173,6 +173,8 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     plt.plot(history.history['acc'])
     plt.plot(history.history['val_acc'])
     plt.title("train vs validation accuracy")
+    plt.ylabel("accuracy")
+    plt.xlabel("epoch")
     plt.legend(["train","validation"], loc="upper right")
     plt.savefig("{}/{}_ACCURACY.png".format(graphs_folder,modelname))
     
@@ -197,7 +199,7 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
         parameters["cnn kernel size"] = kernel_size
         parameters["cnn maxpooling pool size"] = pool_size
         if "cnn" == model_type.lower():
-            parameters["cnn dense hidden units"]
+            parameters["cnn dense hidden units"] = dense_hidden_units
     parameters["optimizer"] = optimizer
     parameters["num training data"] = len(train_data)
 
