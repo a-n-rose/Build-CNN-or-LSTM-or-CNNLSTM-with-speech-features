@@ -156,9 +156,6 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     
     #####################################################################
     ####### TRY AND SEE WHAT THE HECK WAS GOING ON WHILE TRAINING #######
-    
-    #just to keep track and know for sure...
-    print("\nNumber of labels presented to the model \n* Training: {}\n* Validation: {}".format(train_generator.dict_classes_encountered,val_generator.dict_classes_encountered))
 
     print("Now saving history and plots")
     plt.plot(history.history['loss'])
@@ -189,22 +186,27 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     #document settings used in model
     parameters = {}
     parameters["model type"] = model_type.lower()
-    parameters["num training data"] = len(train_data)
     parameters["epochs"] = epochs
     if "lstm" in model_type.lower():
-        parameters["num cells"] = lstm_cells
+        parameters["num lstm cells"] = lstm_cells
     if "cnn" in model_type.lower():
         parameters["cnn feature maps"] = feature_map_filters
-        parameters["kernel size"] = kernel_size
-        parameters["maxpooling pool size"] = pool_size
+        parameters["cnn kernel size"] = kernel_size
+        parameters["cnn maxpooling pool size"] = pool_size
         if "cnn" == model_type.lower():
-            parameters["dense hidden units"]
+            parameters["cnn dense hidden units"]
     parameters["optimizer"] = optimizer
+    parameters["num training data"] = len(train_data)
+
+    #just to keep track and know for sure how many classes got presented during training and validation
+    for key, value in train_generator.dict_classes_encountered.items():
+        parameters["label "+str(key)+" representation in training"] = value
+    for key, value in val_generator.dict_classes_encountered.items():
+        parameters["label "+str(key)+" representation in validation"] = value
     parameters["test acc"] = acc
     parameters["test loss"] = loss
-
     #save in csv file
-    with open('{}model_parameters.csv'.format(model_log_folder),'a',newline='') as f:
+    with open('{}model_info.csv'.format(model_log_folder),'a',newline='') as f:
         w = csv.writer(f)
         w.writerows(parameters.items())
     
