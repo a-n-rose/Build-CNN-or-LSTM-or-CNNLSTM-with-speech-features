@@ -6,7 +6,7 @@ import datetime
 
 import feature_extraction_scripts.organize_speech_data as orgdata
 import feature_extraction_scripts.feature_extraction_functions as featfun
-from feature_extraction_scripts.errors import FeatureExtractionFail
+from feature_extraction_scripts.errors import FeatureExtractionFail, ExitApp
 
 #to keep saved files unique
 #include their names with a timestamp
@@ -51,64 +51,85 @@ def main(data_path,feature_type,num_filters=None,delta=False,noise=False,vad=Fal
     * starting with "_"
     * are typical GitHub files, like LICENSE
     '''
-    labels_class = orgdata.collect_labels(data_path)
-
-    '''
-    Create labels-encoding dictionary:
-    This helps when saving data later to npy files
-    Integer encode the labels and save with feature data as label column
-    '''
-    dict_labels_encoded = orgdata.create_save_dict_labels_encode(labels_class,head_folder)
-    
-
-    train_val_test_filenames = []
-    train_val_test_directories = []
-    for i in ["train","val","test"]:
-        new_path = "{}/data_{}/".format(head_folder,i)
-        train_val_test_filenames.append(new_path+"{}_features".format(i))
-        train_val_test_directories.append(new_path)
-        try:
-            os.makedirs(new_path)
-        except OSError as e:
-            print("Directory  ~  {}  ~  already exists".format(new_path))
+    try:
+        
+        labels_class = orgdata.collect_labels(data_path)
+        labels_print = ""
+        for i in range(len(labels_class)):
+            x = "\n{}) {}".format(i+1,labels_class[i])
+            labels_print += x
+        print("\nClasses found: {}\n".format(labels_print))
+        
+        print("\nIs this correct? (Y/N)")
+        correct_labels = input()
+        if 'y' in correct_labels.lower() or correct_labels.lower() == '':
             pass
+        else:
+            raise ExitApp()
+            
 
-    
-    #############################################
-    ############## DATA ORGANIZATION ############
+        '''
+        Create labels-encoding dictionary:
+        This helps when saving data later to npy files
+        Integer encode the labels and save with feature data as label column
+        '''
+        dict_labels_encoded = orgdata.create_save_dict_labels_encode(labels_class,head_folder)
+        
 
-    #collect filenames and labels of each filename
-    paths, labels_wavefile = orgdata.collect_audio_and_labels(data_path)
+        train_val_test_filenames = []
+        train_val_test_directories = []
+        for i in ["train","val","test"]:
+            new_path = "{}/data_{}/".format(head_folder,i)
+            train_val_test_filenames.append(new_path+"{}_features".format(i))
+            train_val_test_directories.append(new_path)
+            try:
+                os.makedirs(new_path)
+            except OSError as e:
+                print("Directory  ~  {}  ~  already exists".format(new_path))
+                pass
 
-    #to balance out the classes, find the label/class w fewest recordings
-    max_num_per_class, class_max_samps = orgdata.get_max_samples_per_class(labels_class,labels_wavefile)
-    
-    #LOG THE SETTINGS OF FEATURE EXTRACTION IN CSV FILE
-    dict_info_feature_extraction = {"data path":data_path,"limit":limit,"features":feature_type,"num original features":num_filters,"num total features":num_features,"delta":delta,"noise":noise,"beginning silence removal":vad,"timesteps":timesteps,"context window":context_window,"num classes":len(labels_class),"time stamp":time_stamp}
-    orgdata.log_extraction_settings(dict_info_feature_extraction,head_folder)
-    orgdata.log_class4balance(max_num_per_class,class_max_samps,head_folder)
-    '''
-    Create dictionary with labels and their indices in the lists: labels_wavefile and paths
-    useful in separating the indices into balanced train, validation, and test datasets
-    '''
-    dict_class_index_list = orgdata.make_dict_class_index(labels_class,labels_wavefile)
-    
-    '''
-    Assign number of recordings for each dataset, 
-    keeping the data balanced between classes
-    Defaults:
-    * .8 of max number of samples --> train
-    * .1 of max number of samples --> validation
-    * .1 of max number of samples --> test
-    '''
-    max_nums_train_val_test = orgdata.get_max_nums_train_val_test(max_num_per_class)
+        
+        #############################################
+        ############## DATA ORGANIZATION ############
 
-    #randomly assign indices (evenly across class) to train, val, test datasets:
-    dict_class_dataset_index_list = orgdata.assign_indices_train_val_test(labels_class,dict_class_index_list,max_nums_train_val_test)
 
-    #make sure no indices mix between datasets:
-    orgdata.check_4_dataset_mixing(labels_class,dict_class_dataset_index_list)
+        #collect filenames and labels of each filename
+        paths, labels_wavefile = orgdata.collect_audio_and_labels(data_path)
 
+        #to balance out the classes, find the label/class w fewest recordings
+        max_num_per_class, class_max_samps = orgdata.get_max_samples_per_class(labels_class,labels_wavefile)
+        
+        #LOG THE SETTINGS OF FEATURE EXTRACTION IN CSV FILE
+        dict_info_feature_extraction = {"data path":data_path,"limit":limit,"features":feature_type,"num original features":num_filters,"num total features":num_features,"delta":delta,"noise":noise,"beginning silence removal":vad,"timesteps":timesteps,"context window":context_window,"num classes":len(labels_class),"time stamp":time_stamp}
+        orgdata.log_extraction_settings(dict_info_feature_extraction,head_folder)
+        orgdata.log_class4balance(max_num_per_class,class_max_samps,head_folder)
+        '''
+        Create dictionary with labels and their indices in the lists: labels_wavefile and paths
+        useful in separating the indices into balanced train, validation, and test datasets
+        '''
+        dict_class_index_list = orgdata.make_dict_class_index(labels_class,labels_wavefile)
+        
+        '''
+        Assign number of recordings for each dataset, 
+        keeping the data balanced between classes
+        Defaults:
+        * .8 of max number of samples --> train
+        * .1 of max number of samples --> validation
+        * .1 of max number of samples --> test
+        '''
+        max_nums_train_val_test = orgdata.get_max_nums_train_val_test(max_num_per_class)
+
+        #randomly assign indices (evenly across class) to train, val, test datasets:
+        dict_class_dataset_index_list = orgdata.assign_indices_train_val_test(labels_class,dict_class_index_list,max_nums_train_val_test)
+
+        #make sure no indices mix between datasets:
+        orgdata.check_4_dataset_mixing(labels_class,dict_class_dataset_index_list)
+    except ExitApp:
+        sys.exit()
+    except IndexError:
+        print("\nError collecting data.\n".upper())
+        print("Double check how your data is organized. Are the labels printed above correct?\n")
+        sys.exit()
 
     #############################################
     ############# FEATURE EXTRACTION ############

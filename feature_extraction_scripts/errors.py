@@ -14,3 +14,6 @@ class LimitTooSmall(Error):
 
 class FeatureExtractionFail(Error):
     pass
+
+class ExitApp(Error):
+    pass

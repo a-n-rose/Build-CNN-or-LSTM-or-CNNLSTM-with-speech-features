@@ -92,4 +92,8 @@ $ sudo apt-get install tk-dev
 
 2. Download the speech commands dataset <a href="http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz">here</a>. Save the zip folder in the folder named 'data'.
 
-3. Extract the zipfile.
+3. Extract the zipfile. The data directory should look like this:
+
+![Imgur](https://i.imgur.com/fqSzLVm.png)
+
+If instead you have a folder 'speech_commands_0.01', move the folders within that folder up one level. 
