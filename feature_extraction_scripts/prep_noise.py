@@ -143,18 +143,18 @@ def get_speech_samples(samples, sr):
 def samps2stft(y, sr):
     if len(y)%2 != 0:
         y = y[:-1]
-    print("shape of samples: {}".format(y.shape))
+    #print("shape of samples: {}".format(y.shape))
     stft = librosa.stft(y)
-    print("shape of stft: {}".format(stft.shape))
+    #print("shape of stft: {}".format(stft.shape))
     stft = np.transpose(stft)
-    print("transposed shape: {}".format(stft.shape))
+    #print("transposed shape: {}".format(stft.shape))
     return stft
 
 
 def stft2samps(stft,len_origsamp):
-    print("shape of stft: {}".format(stft.shape))
+    #print("shape of stft: {}".format(stft.shape))
     istft = np.transpose(stft.copy())
-    print("transposed shape: {}".format(istft.shape))
+    ##print("transposed shape: {}".format(istft.shape))
     samples = librosa.istft(istft,length=len_origsamp)
     return samples
 
@@ -203,7 +203,7 @@ def subtract_noise(noise_powerspec_mean,noise_powerspec_variance, speech_powersp
 def voice_activity_detection(stft, energy_matrix, energy_mean, start=True):
     voice_start,voice = sound_index(energy_matrix,energy_mean,start=True,)
     if voice:
-        print("Speech detected at index: {}".format(voice_start))
+        #print("Speech detected at index: {}".format(voice_start))
         stft = stft[voice_start:]
         
     else:

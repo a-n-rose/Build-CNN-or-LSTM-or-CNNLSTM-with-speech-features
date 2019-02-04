@@ -57,8 +57,11 @@ def main(project_head_folder,model_name):
     with open(encoded_label_path, mode='r') as infile:
         reader = csv.reader(infile)            
         dict_labels_encoded = {rows[0]:rows[1] for rows in reader}
-        
     
+    print("\nAvailable labels:")
+    for key, value in dict_labels_encoded.items():
+        print(value)
+        
     #collect new speech 
     noise, sr = record_sound(4,"Recording background noise")
     speech,sr = record_sound(4,"Please say *loud and clear* one of the target words. \nRecording")
@@ -139,8 +142,8 @@ def main(project_head_folder,model_name):
 
 if __name__=="__main__":
     
-    project_head_folder = "fbank_models_4d12h26m12s"
-    model_name = "CNNLSTM_speech_commands_4d12h31m19s"
+    project_head_folder = "fbank_models_4d13h1m59s"
+    model_name = "CNNLSTM_speech_commands_4d13h16m30s"
     
     main(project_head_folder,model_name)
         
