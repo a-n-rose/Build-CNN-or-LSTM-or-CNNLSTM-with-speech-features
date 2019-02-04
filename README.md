@@ -4,9 +4,9 @@ In this workshop, our goal is to experiment with speech feature extraction and t
 
 Applying deep learning to the speech signal has many uses. We all know that we can speak to Siri and Alexa, but speech can also be used for security purposes, as in <a href="https://arxiv.org/abs/1803.05427">speaker verification</a>, as well as in <a href="https://www.dw.com/en/voice-analysis-an-objective-diagnostic-tool-based-on-flawed-algorithms/a-17187057">healthcare contexts</a>, for example, identifying if a person has Parkinson's or if they have Attention Deficit Hyperactivity Disorder. While I just listed a couple, there are many other fields where the analysis of the speech signal is relevant.
 
-In much of the research I have read, recurring speech features used in machine and deep learning are the <a href="http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/">Mel Frequency Cepstral Coefficients</a> (MFCC) and the Mel Filterbank Energies (FBANK), which are similar but less filtered than the MFCC.
+In much of the research I have read, recurring speech features used in machine and deep learning are the <a href="http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/">Mel Frequency Cepstral Coefficients</a> (MFCC), the Mel Filterbank Energies (FBANK), which are similar but less filtered than the MFCC, as well as the <a href="https://ccrma.stanford.edu/~jos/sasp/Short_Time_Fourier_Transform.html">short-time fourier transform</a> (STFT) of the raw waveform. 
 
-Additionally, deep learning neural networks I see quite often are the convolutional neural network (CNN) and, for time series analysis, long short-term memory neural networks (LSTM).
+Additionally, deep learning neural networks I see quite often are the convolutional neural network (CNN) and, for time series analysis, long short-term memory neural networks (LSTM), among others, but for this workshop, we'll stick with these.
 
 Python offers libraries for audio analysis, <a href="https://librosa.github.io/">Librosa</a>, as well as for deep learning, <a href="https://keras.io/">Keras</a>. In this workshop, we will explore speech feature extraction using Librosa and the training of neural networks via Keras.
 
