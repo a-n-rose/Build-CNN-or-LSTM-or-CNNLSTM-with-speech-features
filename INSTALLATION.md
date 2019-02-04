@@ -86,13 +86,20 @@ If you also want to run 'implement_model.py', which will need to record audio, y
 
 ### POSSIBLE PROBLEMS WITH INSTALLATION:
 
-If you need to install [tk_tinker](https://wiki.python.org/moin/TkInter) as well, here is what you can do:
+To double check installation of matplotlib is totally fine. Open a python shell (by typing ```python```) and type:
+
+```
+import matplotlib.pyplot as plt
+```
+
+If that raises an error related to tk inter, then tk inter support is missing from your python. Check [tk_tinker](https://wiki.python.org/moin/TkInter) for installation instructions or for ubuntu you can do:
 
 ```
 $ sudo apt-get install python3-tk
 
 $ sudo apt-get install tk-dev
 ```
+If that doesn't fix the issue, reinstalling python and setting up the environment will be needed to make python support tk inter. Check [pyenv](https://github.com/pyenv/pyenv#simple-python-version-management-pyenv) for easy python version installations.
 
 ## Download the Data
 
