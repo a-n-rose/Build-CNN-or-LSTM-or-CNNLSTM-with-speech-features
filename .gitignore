@@ -6,7 +6,8 @@ env
 
 # generated
 ml_speech_projects
-*/__pycache__
+__pycache__
+recordings
 
 # editor files
 .vscode
