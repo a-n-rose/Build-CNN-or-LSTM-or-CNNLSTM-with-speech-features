@@ -14,6 +14,8 @@ Python offers libraries for audio analysis, <a href="https://librosa.github.io/"
 
 For Installation instructions, see <a href="https://github.com/a-n-rose/Build-CNN-or-LSTM-or-CNNLSTM-with-speech-features/blob/master/INSTALLATION.md">here</a>.
 
+## Run
+
 After you have installed everything, start up your virtual environment:
 
 ```
@@ -54,7 +56,37 @@ features_and_models_2019y2m2d22h6m19s
 
 Press ENTER and it should start training! As is, the script should take appx. 4 minutes.
 
-Once the scripts are through, you can look through the newly created files in your directory. You should see 'ml_speech_projects'. If you look in that folder, you will see a folder for each time you extracted features. It will have a name similar to this one:
+At the end, it will print out the name of the model you just created. If you would like to implement this model, copy this name and paste it in the 'implement_model.py' script (further instructions below).
+
+```
+If you want to implement this model, the model's name is:
+
+
+CNNLSTM_speech_commands_4d13h41m48s
+
+```
+
+### OPTIONAL: IMPLEMENT THE MODEL
+
+If you would like to implement the model, and test the model on speech you record, make sure you have installed the requirements for that (see INSTALLATION). Open the script 'implement_model.py'. Scroll to the bottom and enter the folder name (referred to above as 'features_and_models_20h32m31s') as well as the model name of the trained model you would like to test (referred to above as 'CNNLSTM_speech_commands_4d13h41m48s'):
+
+```
+if __name__=="__main__":
+    
+    project_head_folder = <ENTER FOLDER NAME>
+    model_name = <ENTER MODEL NAME>
+    
+    main(project_head_folder,model_name)
+
+```
+
+When you run this, it will first record background noise; then it will prompt you to say something. (If you trained on words, say one of the words you trained on.) See how well it does!
+
+In the workshop we will explore these scripts in detail, and change parameters to see how the training might be affected. Note: due to time constraints, we will not train on the entire dataset in the workshop. You are encouraged to do so at home, perhaps leaving the computer on and leave to extract features/ train through the night.
+
+## New Folders and Graphs
+
+Once these scripts are through, you can look through the newly created files in your directory. You should see 'ml_speech_projects'. If you look in that folder, you will see a folder for each time you extracted features. It will have a name similar to this one:
 
 ```
 features_and_models_20h32m31s
@@ -62,7 +94,6 @@ features_and_models_20h32m31s
 
 Inside of that folder you will find all of the train, validation, and train datasets, a folder showing graphs of how the model trained, the label the labels were encoded as, and other information as well.
 
-In the workshop we will explore these scripts in detail, and change parameters to see how the training might be affected. Note: due to time constraints, we will not train on the entire dataset in the workshop. You are encouraged to do so at home, perhaps leaving the computer on and train through the night.
 
 ## Future Use
 
