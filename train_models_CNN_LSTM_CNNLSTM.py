@@ -217,6 +217,8 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
         w = csv.writer(f)
         w.writerows(parameters.items())
     
+    print("\n\nIf you want to implement this model, the model's name is:\n\n{}".format(modelname))
+    
     return True
 
 
