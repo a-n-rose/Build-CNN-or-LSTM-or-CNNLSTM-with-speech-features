@@ -135,7 +135,114 @@ def get_speech_samples(samples, sr):
         
     return samples, False
     
-        
+######
+
+#noise reduction
+
+
+def samps2stft(y, sr):
+    if len(y)%2 != 0:
+        y = y[:-1]
+    print("shape of samples: {}".format(y.shape))
+    stft = librosa.stft(y)
+    print("shape of stft: {}".format(stft.shape))
+    stft = np.transpose(stft)
+    print("transposed shape: {}".format(stft.shape))
+    return stft
+
+
+def stft2samps(stft,len_origsamp):
+    print("shape of stft: {}".format(stft.shape))
+    istft = np.transpose(stft.copy())
+    print("transposed shape: {}".format(istft.shape))
+    samples = librosa.istft(istft,length=len_origsamp)
+    return samples
+
+def stft2power(stft_matrix):
+    if stft_matrix is not None:
+        if len(stft_matrix) > 0:
+            stft = stft_matrix.copy()
+            power = np.abs(stft)**2
+            return power
+        else:    
+            raise TypeError("STFT Matrix is empty. Function 'stft2power' needs a non-empty matrix.")
+    else:
+        raise TypeError("STFT Matrix does not exist. Function 'stft2power' needs an existing matrix.")
+    return None
+
     
+def get_energy_rms(stft_matrix):
+    #stft.shape[1] == bandwidths/frequencies
+    #stft.shape[0] pertains to the time domain
+    rms_list = [np.sqrt(sum(np.abs(stft_matrix[row])**2)/stft_matrix.shape[1]) for row in range(len(stft_matrix))]
+    return rms_list
+
+def get_mean_bandwidths(matrix_bandwidths):
+    bw = matrix_bandwidths.copy()
+    bw_mean = [np.mean(bw[:,bandwidth]) for bandwidth in range(bw.shape[1])]
+    return bw_mean
+
+def get_var_bandwidths(matrix_bandwidths):
+    if len(matrix_bandwidths) > 0:
+        bw = matrix_bandwidths.copy()
+        bw_var = [np.var(bw[:,bandwidth]) for bandwidth in range(bw.shape[1])]
+        return bw_var
+    return None
+
+
+def subtract_noise(noise_powerspec_mean,noise_powerspec_variance, speech_powerspec_row,speech_stft_row):
+    npm = noise_powerspec_mean
+    npv = noise_powerspec_variance
+    spr = speech_powerspec_row
+    stft_r = speech_stft_row.copy()
+    for i in range(len(spr)):
+        if spr[i] <= npm[i] + npv[i]:
+            stft_r[i] = 1e-3
+    return stft_r
+
+def voice_activity_detection(stft, energy_matrix, energy_mean, start=True):
+    voice_start,voice = sound_index(energy_matrix,energy_mean,start=True,)
+    if voice:
+        print("Speech detected at index: {}".format(voice_start))
+        stft = stft[voice_start:]
+        
+    else:
+        print("No speech detected.")
+    return stft
+
+def rednoise(samples_recording,samples_noise, sampling_rate):
+    '''
+    calculates the power in noise signal and subtracts that
+    from the recording
+    
+    returns recording samples with reduced noise
+    '''
+    
+    #1) time domain to frequency domain:
+    #get the short-time fourier transform (STFT) of noise and recording
+    stft_n = samps2stft(samples_noise,sampling_rate)
+    stft_r = samps2stft(samples_recording, sampling_rate)
+    
+    #2) calculate the power
+    power_n = stft2power(stft_n)
+    power_r = stft2power(stft_r)
+    
+    #3) calculate the power mean, and power variance of noise
+    power_mean_n = get_mean_bandwidths(power_n)
+    power_var_n = get_var_bandwidths(power_n)
+    
+    #4) subtract noise from recording:
+    #using list comprehension to work through all samples of recording
+    stft_r_rednoise = np.array([subtract_noise(power_mean_n,power_var_n,power_r[i],stft_r[i]) for i in range(stft_r.shape[0])])
+
+    #5) detect speech and where when it starts:
+    energy_r = get_energy_rms(stft_r)
+    energy_r_mean = get_energy_mean(energy_r)
+    stft_r_nr_vad = voice_activity_detection(stft_r_rednoise, energy_r, energy_r_mean)
+
+    #save this to see if it worked:
+    samps_rednoise_vad= stft2samps(stft_r_nr_vad, len(samples_recording))
+    
+    return samps_rednoise_vad
     
    
