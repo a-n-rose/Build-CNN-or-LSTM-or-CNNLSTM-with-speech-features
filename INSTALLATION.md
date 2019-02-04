@@ -119,4 +119,4 @@ If you have trouble unzipping this file, try installing <a href="https://www.7-z
 
 ## Other Data Options
 
-You are welcome to use other data. I have instructions <a href="https://a-n-rose.github.io/2019/01/31/small-female-male-speech-data.html">here</a> for downloading female and male speech data from an online speech database. Ensure that the contents of the 'data' folder look like the picture above (with the folder names matching the classes of the data you want to use, e.g. "male_speech" and "female_speech".
+You are welcome to use other data. I have instructions <a href="https://a-n-rose.github.io/2019/01/31/small-female-male-speech-data.html">here</a> for downloading female and male speech data from an online speech database. Ensure that the contents of the 'data' folder look like the picture above (with the folder names matching the classes of the data you want to use, e.g. "male_speech" and "female_speech").
