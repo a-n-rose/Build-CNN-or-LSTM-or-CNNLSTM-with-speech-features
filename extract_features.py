@@ -1,40 +1,85 @@
+# To control the system (exit the program, create new directories)
 import sys
 import os
+
+# Keep track of the time --> time stamps; keep track of duration
 import time
 import datetime
 
+# python library to handle matrices
 import numpy as np
 
+# import modules with functions I wrote to organize data and extract features
 import feature_extraction_scripts.organize_speech_data as orgdata
 import feature_extraction_scripts.feature_extraction_functions as featfun
+
+# Handle exceptions I think might happen
 from feature_extraction_scripts.errors import FeatureExtractionFail, ExitApp
 
-#to keep saved files unique
-#include their names with a timestamp
+
+##########################################################################
+########################### FUNCTIONS ####################################
+
+
 def get_date():
+    '''
+    This creates a string of the day, hour, minute and second
+    I use this to make filenames unique
+    Note: this is okay for casual/short-term use
+    There is some risk in overwriting files, over months, for example.
+    So use something else if you really don't want to lose anything.
+    '''
     time = datetime.datetime.now()
     time_str = "{}d{}h{}m{}s".format(time.day,time.hour,time.minute,time.second)
     return(time_str)
 
 def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,noise=False,vad=False,timesteps=None,context_window=None,noise_path=None,limit=None):
-    #set defaults:
-    if num_filters is None and feature_type == "stft":
-        num_filters = 201
-    elif num_filters is None and feature_type != "stft":
+    '''
+    Here defaults are set, if they aren't yet set by the user.
+    
+    Number of Filters OR Number of Coefficients
+    
+    FBANK or mel filterbank energies are produced based on the number of mel filters used. 
+    *20 and 40 are pretty common.
+    
+    MFCCs or mel frequency cepstral coefficients also use mel filters. With additional mathematic equations applied, to ultimately make speech easier for traditional machine learning algorithms to learn (they reduce the colinearity of the features)
+    * 13,20,40 coefficients are not uncommon.
+    '''
+    if num_filters is None and feature_type != "stft":
+        #Common number of coefficients / filters for MFCC and FBANK is 40
         num_filters = 40
+    if feature_type == "stft":
+        #This number might change if you change the window size/ window shift
+        #settings within the feature extraction functions.
+        #I have put window size == 25ms and window shift == 10ms as default.
+        num_filters = 201
+    if noise is False:
+        #ensure that if the user doesn't want to add noise to data, 
+        #that the wavefile variable is set to None
+        noise_path = None
     if timesteps is None:
+        # For the LSTM: in how many segments do you want each recording to
+        # be split up? The LSTM would be fed each section, consecutively.
         timesteps = 5
     if context_window is None:
+        # This concerns how large you want each set of frames to be. 
+        # The frame width contains a central frame, with surrounding context windows. 
         context_window = 5
+    
+    #keep track of how many feature columns will be needed to store feature data
     if delta:
+        #delta stands for both delta and delta delta
+        #these are the first and second derivatives of whatever features are extracted
+        #apparently these show 'rate of change' and 'rate of acceleration'
+        #and have been used in speech recognition/related machine learning tasks
         num_feature_columns = num_filters * 3
     else:
         num_feature_columns = num_filters
     if dom_freq is not False:
+        #dominant frequency is an experimental parameter... simply which
+        #frequency is the dominant one, at each of the sampled windows and window shifts.
         num_feature_columns += 1
 
-    #frame_width is the sum of frames including:
-    #1 central frame with a context window in front and one context window behind
     frame_width = context_window*2 + 1
 
     #####################################################################
@@ -43,7 +88,7 @@ def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,nois
     start = time.time()
     time_stamp = get_date()
     head_folder_beg = "./ml_speech_projects/"
-    curr_folder = "{}_models_{}".format(feature_type,time_stamp)
+    curr_folder = "{}{}_models_{}".format(feature_type,num_feature_columns,time_stamp)
     head_folder = head_folder_beg+curr_folder
     #create folder to store all data (encoded labels, features)
     if not os.path.exists(head_folder):
@@ -82,7 +127,8 @@ def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,nois
         '''
         dict_labels_encoded = orgdata.create_save_dict_labels_encode(labels_class,head_folder)
         
-
+        
+        #create directories to store train, validation, and test data
         train_val_test_filenames = []
         train_val_test_directories = []
         for i in ["train","val","test"]:
@@ -98,18 +144,19 @@ def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,nois
         
         #############################################
         ############## DATA ORGANIZATION ############
-
+        
+        '''
+        I made the decision to balance the classes out. Real data doesn't have 
+        balanced classes. But, because this code was prepared for a workshop, 
+        one for exploring how feature extraction influenced deep learning models, I decided to remove that confounding factor.
+        '''
 
         #collect filenames and labels of each filename
         paths, labels_wavefile = orgdata.collect_audio_and_labels(data_path)
 
         #to balance out the classes, find the label/class w fewest recordings
         max_num_per_class, class_max_samps = orgdata.get_max_samples_per_class(labels_class,labels_wavefile)
-        
-        #LOG THE SETTINGS OF FEATURE EXTRACTION IN CSV FILE
-        dict_info_feature_extraction = {"data path":data_path,"limit":limit,"features":feature_type,"num original features":num_filters,"num total features":num_feature_columns,"delta":delta,"dominant frequency":dom_freq,"noise":noise,"beginning silence removal":vad,"timesteps":timesteps,"context window":context_window,"num classes":len(labels_class),"time stamp":time_stamp}
-        orgdata.log_extraction_settings(dict_info_feature_extraction,head_folder)
-        orgdata.log_class4balance(max_num_per_class,class_max_samps,head_folder)
+
         '''
         Create dictionary with labels and their indices in the lists: labels_wavefile and paths
         useful in separating the indices into balanced train, validation, and test datasets
@@ -149,6 +196,8 @@ def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,nois
         for i in range(3):
             dataset_index = i   # 0 = train, 1 = validation, 2 = test
             
+            #see the script 'feature_extraction_functions.py' in the folder
+            #'feature_extraction_scripts' for more information about extraction.
             extraction_completed = featfun.save_feats2npy(labels_class,dict_labels_encoded,train_val_test_filenames[dataset_index],max_nums_train_val_test[dataset_index],dict_class_dataset_index_list,paths,labels_wavefile,feature_type,num_filters,num_feature_columns,timesteps,frame_width,head_folder,limit=limit,delta=delta,dom_freq=dom_freq,noise_wavefile=noise_path,vad=vad,dataset_index=dataset_index)
             
             if extraction_completed:
@@ -159,6 +208,13 @@ def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,nois
             
         end_feature_extraction = time.time()
         print("Duration of feature extraction: {} minutes".format(round((end_feature_extraction-start_feature_extraction)/60,2)))
+    
+        
+        #LOG THE SETTINGS OF FEATURE EXTRACTION IN CSV FILE
+        dict_info_feature_extraction = {"data path":data_path,"limit":limit,"features":feature_type,"num original features":num_filters,"num total features":num_feature_columns,"delta":delta,"dominant frequency":dom_freq,"noise":noise,"beginning silence removal":vad,"timesteps":timesteps,"context window":context_window,"num classes":len(labels_class),"time stamp":time_stamp, "duration in minutes":round((end_feature_extraction-start_feature_extraction)/60,2)}
+        orgdata.log_extraction_settings(dict_info_feature_extraction,head_folder)
+        orgdata.log_class4balance(max_num_per_class,class_max_samps,head_folder)
+        
     
         print("\nFolder name to copy and paste for the training script:".upper())
         print("\n\n'{}'\n\n".format(curr_folder))
@@ -185,14 +241,12 @@ if __name__=="__main__":
     #number of filters or coefficients? If STFT, doesn't matter.. can put None
     num_filters = 40 # Options: 40, 20, 13, None
     delta = False # Calculate the 1st and 2nd derivatives of features?
-    dom_freq = False # Basically... Pitch (dominant frequency)
+    dom_freq = False # Kinda sorta... Pitch (dominant frequency)
     noise = True # Add noise to speech data?
-    vad = True #voice activity detection
+    vad = True # Apply voice activity detection (removes the beginning and ending 'silence'/background noise of recordings)
     timesteps = 5
     context_window = 5
     #If noise == True, put the pathway to that noise here:
-    #this path is a noise wave from the Speech Commands Dataset
-    #If noise == False, put 'None'
     noise_path = "./data/_background_noise_/doing_the_dishes.wav" 
 
     main(
