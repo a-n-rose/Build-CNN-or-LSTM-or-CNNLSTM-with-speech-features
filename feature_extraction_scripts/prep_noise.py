@@ -196,7 +196,7 @@ def subtract_noise(noise_powerspec_mean,noise_powerspec_variance, speech_powersp
     spr = speech_powerspec_row
     stft_r = speech_stft_row.copy()
     for i in range(len(spr)):
-        if spr[i] <= npm[i] + npv[i]:
+        if spr[i] <= npm[i]:# + npv[i]:
             stft_r[i] = 1e-3
     return stft_r
 
