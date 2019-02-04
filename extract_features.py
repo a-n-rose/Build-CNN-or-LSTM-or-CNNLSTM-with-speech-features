@@ -181,11 +181,11 @@ if __name__=="__main__":
     #should there be a limit on how many waves are processed?
     limit = .05 # Options: False or fraction of data to be extracted
     #which type of features to extract?
-    feature_type = "mfcc" # "mfcc" "fbank" "stft"
+    feature_type = "fbank" # "mfcc" "fbank" "stft"
     #number of filters or coefficients? If STFT, doesn't matter.. can put None
-    num_filters = None # Options: 40, 20, 13, None
-    delta = False # Calculate the 1st and 2nd derivatives of features?
-    dom_freq = True # Basically... Pitch (dominant frequency)
+    num_filters = 40 # Options: 40, 20, 13, None
+    delta = True # Calculate the 1st and 2nd derivatives of features?
+    dom_freq = False # Basically... Pitch (dominant frequency)
     noise = True # Add noise to speech data?
     vad = True #voice activity detection
     timesteps = 5

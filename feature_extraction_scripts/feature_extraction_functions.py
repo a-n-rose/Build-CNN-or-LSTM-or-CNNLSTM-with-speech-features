@@ -93,7 +93,7 @@ def get_feats(wavefile,feature_type,num_features,num_feature_columns,head_folder
         dom_freq = dom_freq.reshape((dom_freq.shape+(1,)))
         features = np.concatenate((features,dom_freq),axis=1)
     if features.shape[1] != num_feature_columns: 
-        raise FeatureExtractionFail("The file '{}' results in the incorrect  number of columns (should be {} columns): shape {}".format(wavefile,num_features,features.shape))
+        raise FeatureExtractionFail("The file '{}' results in the incorrect  number of columns (should be {} columns): shape {}".format(wavefile,num_feature_columns,features.shape))
     
     return features
     
