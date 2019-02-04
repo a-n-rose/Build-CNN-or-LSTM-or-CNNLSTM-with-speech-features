@@ -184,7 +184,7 @@ if __name__=="__main__":
     feature_type = "fbank" # "mfcc" "fbank" "stft"
     #number of filters or coefficients? If STFT, doesn't matter.. can put None
     num_filters = 40 # Options: 40, 20, 13, None
-    delta = True # Calculate the 1st and 2nd derivatives of features?
+    delta = False # Calculate the 1st and 2nd derivatives of features?
     dom_freq = False # Basically... Pitch (dominant frequency)
     noise = True # Add noise to speech data?
     vad = True #voice activity detection
