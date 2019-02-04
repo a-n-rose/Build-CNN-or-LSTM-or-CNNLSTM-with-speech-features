@@ -76,7 +76,15 @@ In your virtual environment, run 'requirements.txt' to install all necessary pac
 (env)..$ pip install -r requirements.txt
 ```
 
-That should be all you need. But...
+### OPTIONAL INSTALLATION
+
+If you also want to run 'implement_model.py', which will need to record audio, you will also need to install sounddevice and soundfile. You can do this with the following:
+
+```
+(env)..$ pip install -r requirements_implementmodel.txt
+```
+
+### POSSIBLE PROBLEMS WITH INSTALLATION:
 
 If you need to install [tk_tinker](https://wiki.python.org/moin/TkInter) as well, here is what you can do:
 
@@ -97,3 +105,11 @@ $ sudo apt-get install tk-dev
 ![Imgur](https://i.imgur.com/fqSzLVm.png)
 
 If instead you have a folder 'speech_commands_0.01', move the folders within that folder up one level. 
+
+### POSSIBLE PROBLEMS WITH DOWNLOAD:
+
+If you have trouble unzipping this file, try installing <a href="https://www.7-zip.org/">7-zip</a>. Then use that to unzip the file.
+
+## Other Data Options
+
+You are welcome to use other data. I have instructions <a href="https://a-n-rose.github.io/2019/01/31/small-female-male-speech-data.html">here</a> for downloading female and male speech data from an online speech database. Ensure that the contents of the 'data' folder look like the picture above (with the folder names matching the classes of the data you want to use, e.g. "male_speech" and "female_speech".
