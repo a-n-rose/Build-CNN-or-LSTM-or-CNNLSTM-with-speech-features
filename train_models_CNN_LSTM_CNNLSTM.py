@@ -208,6 +208,8 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
         parameters["label "+str(key)+" representation in training"] = value
     for key, value in val_generator.dict_classes_encountered.items():
         parameters["label "+str(key)+" representation in validation"] = value
+    parameters["loss type"] = loss_type
+    parameters["activation output"] = activation_output
     parameters["test acc"] = acc
     parameters["test loss"] = loss
     #save in csv file
