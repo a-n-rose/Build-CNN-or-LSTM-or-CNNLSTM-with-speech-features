@@ -5,6 +5,18 @@ import csv
 import random
 from feature_extraction_scripts.errors import DatasetMixing
 
+
+
+
+def unique_path(directory, name_pattern):
+    counter = 0
+    while True:
+        counter += 1
+        path = directory / name_pattern.format(counter)
+        if not path.exists():
+            return path
+        
+
 def collect_labels(data_path):
     p = Path(data_path)
     labels = list(p.glob('*/'))
@@ -47,14 +59,16 @@ def save_class_labels(sorted_labels,head_folder):
     dict_labels = {}
     for i, label in enumerate(sorted_labels):
         dict_labels[i] = label
-    filename = '{}/labels_encoded.csv'.format(head_folder)
-    with open(filename,'w') as f:
+    filename = 'labels_encoded'
+    path = unique_path(Path(head_folder), filename+"{:03d}.csv")
+    with open(path,'w') as f:
         w = csv.writer(f)
         w.writerows(dict_labels.items())
     
     return None
 
 def log_class4balance(max_num_per_class,class_max_samps,head_folder):
+    #don't need unique name: write into an existing file
     filename = '{}/features_log.csv'.format(head_folder)
     with open(filename, 'a', newline='') as f:
         w = csv.writer(f)
