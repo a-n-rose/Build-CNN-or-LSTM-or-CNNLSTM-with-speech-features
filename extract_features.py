@@ -24,14 +24,14 @@ from feature_extraction_scripts.errors import FeatureExtractionFail, ExitApp
 def get_date():
     '''
     This creates a string of the day, hour, minute and second
-    I use this to make filenames unique
-    Note: this is okay for casual/short-term use
-    There is some risk in overwriting files, over months, for example.
-    So use something else if you really don't want to lose anything.
+    I use this to make folder names unique
+    
+    For the files themselves, I generate genuinely unique names (i.e. name001.csv, name002.csv, etc.)
     '''
     time = datetime.datetime.now()
-    time_str = "{}d{}h{}m{}s".format(time.day,time.hour,time.minute,time.second)
+    time_str = "{}y{}m{}d{}h{}m{}s".format(time.year,time.month,time.day,time.hour,time.minute,time.second)
     return(time_str)
+
 
 def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,noise=False,vad=False,timesteps=None,context_window=None,noise_path=None,limit=None):
     '''
@@ -111,7 +111,7 @@ def main(data_path,feature_type,num_filters=None,delta=False,dom_freq=False,nois
             x = "\n{}) {}".format(i+1,labels_class[i])
             labels_print += x
         print("\nClasses found: {}\n".format(labels_print))
-        
+        print("\nLimit: {}\n".format(limit))
         print("\nIs this correct? (Y/N)")
         correct_labels = input()
         if 'y' in correct_labels.lower() or correct_labels.lower() == '':
