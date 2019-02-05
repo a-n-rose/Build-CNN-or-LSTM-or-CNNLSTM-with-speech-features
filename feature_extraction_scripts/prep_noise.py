@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun  1 18:28:19 2018
+'''
+These are a series of functions I made while working on a previous project (Mimic-Master).
+It required noise cancellation and speech detection. It happens that these 
+also help out in prepping speech for deep learning! 
 
-@author: airos
-"""
+I will work on adding explanations to each of the functions; I should have done that when I made them... hindsight is always 20-20.
+
+'''
 
 import numpy as np
 import librosa
