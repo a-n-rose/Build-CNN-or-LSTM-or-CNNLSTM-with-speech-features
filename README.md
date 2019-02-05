@@ -6,7 +6,7 @@ Applying deep learning to the speech signal has many uses. We all know that we c
 
 In much of the research I have read, recurring speech features used in machine and deep learning are the <a href="http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/">Mel Frequency Cepstral Coefficients</a> (MFCC), the Mel Filterbank Energies (FBANK), which are similar but less filtered than the MFCC, as well as the <a href="https://ccrma.stanford.edu/~jos/sasp/Short_Time_Fourier_Transform.html">short-time fourier transform</a> (STFT) of the raw waveform. 
 
-Additionally, deep learning neural networks I see quite often are the convolutional neural network (CNN) and, for time series analysis, long short-term memory neural networks (LSTM), among others, but for this workshop, we'll stick with these.
+Additionally, deep learning neural networks I see quite often are the <a href="https://ujjwalkarn.me/2016/08/11/intuitive-explanation-convnets/">convolutional neural network</a> (CNN) and, for time series analysis, <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">long short-term memory</a> neural networks (LSTM), among others, but for this workshop, we'll stick with these.
 
 Python offers libraries for audio analysis, <a href="https://librosa.github.io/">Librosa</a>, as well as for deep learning, <a href="https://keras.io/">Keras</a>. In this workshop, we will explore speech feature extraction using Librosa and the training of neural networks via Keras.
 
