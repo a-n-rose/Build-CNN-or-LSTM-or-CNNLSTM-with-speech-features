@@ -86,7 +86,7 @@ In the workshop we will explore these scripts in detail, and change parameters t
 
 ## Visualize Feature Extraction
 
-If you would like to see visually what the various features look like, and how they look with added noise, beginning silence removal (vad - voice activity detection), etc. open the script 'visualize_features.py'. This will create a new directory called 'visualizations' and store the png files there. 
+If you would like to see visually what the various features look like, and how they look with added noise, beginning silence removal (vad - voice activity detection), etc. open the script 'visualize_features.py'. Once you have set the wavefile and features you would like to explore, run the script. This will create a new directory called 'visualizations' where visualizations will be stored. 
 
 ```
 (env)..$ python3 visualize_features.py
