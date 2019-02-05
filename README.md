@@ -84,6 +84,14 @@ When you run this, it will first record background noise; then it will prompt yo
 
 In the workshop we will explore these scripts in detail, and change parameters to see how the training might be affected. Note: due to time constraints, we will not train on the entire dataset in the workshop. You are encouraged to do so at home, perhaps leaving the computer on and leave to extract features/ train through the night.
 
+## Visualize Feature Extraction
+
+If you would like to see visually what the various features look like, and how they look with added noise, beginning silence removal (vad - voice activity detection), etc. open the script 'visualize_features.py'. This will create a new directory called 'visualizations' and store the png files there. 
+
+```
+(env)..$ python3 visualize_features.py
+```
+
 ## New Folders and Graphs
 
 Once these scripts are through, you can look through the newly created files in your directory. You should see 'ml_speech_projects'. If you look in that folder, you will see a folder for each time you extracted features. It will have a name similar to this one:

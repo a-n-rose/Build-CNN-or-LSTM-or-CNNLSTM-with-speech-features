@@ -8,6 +8,7 @@ env
 ml_speech_projects
 __pycache__
 recordings
+visualizations
 
 # editor files
 .vscode
