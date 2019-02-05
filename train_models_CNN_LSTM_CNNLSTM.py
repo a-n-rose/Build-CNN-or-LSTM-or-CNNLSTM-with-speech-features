@@ -8,16 +8,22 @@ Kim, Myungjong & Cao, Beiming & An, Kwanghoon & Wang, Jun. (2018). Dysarthric Sp
 import os
 import time
 import datetime
+
 import numpy as np
+
+#saving and visualizing data
 import matplotlib.pyplot as plt
 import csv
 
 # for building and training models
 import keras
-#from keras.models import Sequential
-#from keras.layers import Dense, Conv2D, Flatten, LSTM, MaxPooling2D, Dropout, TimeDistributed, ConvLSTM2D
+
+# with 'callbacks', I can save the best version of a model as it trains
+# I can also stop the training if it doesn't improve much
+# As well as other features..
 from keras.callbacks import EarlyStopping,ReduceLROnPlateau,CSVLogger,ModelCheckpoint
 
+# modules with functions I wrote to build the model and feed data to the model
 from model_scripts.generator_speech_CNN_LSTM import Generator
 import model_scripts.build_model as build
 
@@ -42,6 +48,8 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     print("\n\nWhich folder contains the train, validation, and test datasets you would like to train this model on?\n")
     project_head_folder=input()
     
+    
+    #create folders to store information, i.e. graphs, logs, models
     head_folder_beg = "./ml_speech_projects/"
     head_folder_curr_project = head_folder_beg+project_head_folder
     #create folders to store models, logs, and graphs
@@ -53,6 +61,7 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
         if not os.path.exists(folder):
             os.makedirs(folder)
     
+    #create name for model to be saved/associated with:
     #make model name unique with timestamp
     modelname = "{}_speech_commands_{}".format(model_type.upper(),time_stamp)
     
@@ -68,19 +77,31 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     timesteps = int(feats_dict['timesteps'])
     context_window = int(feats_dict['context window'])
     
+    #'communicate' with the user information about the model and features used to train it:
+    print("\n\nTraining the {} model\n".format(model_type).upper())
     print("\nInfo about training data:\n".upper())
     for key, item in feats_dict.items():
         print(key," : ",item)
     
+    # specify some additional variables:
     frame_width = context_window*2+1
+    #is for convolutional neural networks. They need to know which colors they're working with. 1 --> grayscale, 3 --> rgb or red-green-blue, 4 --> rgba or red-green-blue-alpha (whatever that last one is)
     color_scale = 1 
     #####################################################################
     ######################### BUILD MODEL  ##############################
     
 
-    
-    #based on number of labels, set model settings:
     loss_type, activation_output = build.assign_model_settings(num_labels,sparse_targets)
+    #based on number of labels, set model settings:
+    #if only 2 labels --> 
+    #activation_output == "sigmoid"
+    #loss_type == "binary_crossentropy"
+    
+    #if more lables --> 
+    #activation_output == "softmax"
+    #loss_type == either "categorical_crossentropy" or "sparse_categorical_crossentropy"
+    #Note: sparse is for if the labels are NOT one-hot-encoded, only integer-encoded
+
 
     #build the model architecture:
     #read up on what they do and feel free to adjust!
@@ -94,6 +115,7 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     #hidden dense layer
     dense_hidden_units = 60
     
+    #feel free to adjust model architecture within the script 'build_model.py' in the folder 'model_scripts'
     model = build.buildmodel(model_type,num_labels,frame_width,timesteps,num_features,color_scale,lstm_cells,feature_map_filters,kernel_size,pool_size,dense_hidden_units,activation_output)
     
     #see what the model architecture looks like:
@@ -113,6 +135,8 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
 
     #####################################################################
     ################ LOAD TRAINING AND VALIDATION DATA  #################
+    
+    #load the .npy files containing the data
     filename_train = "ml_speech_projects/{}/data_train/train_features.npy".format(project_head_folder)
     train_data = np.load(filename_train)
     
@@ -139,6 +163,8 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
             validation_steps = val_data.shape[0]/(timesteps*frame_width)
             )
     end_training = time.time()
+    #Note, please examine the generator class in the script "generator_speech_CNN_LSTM.py" in the folder "model_scripts"
+    
     
     print("\nNow testing the model..")
     #now to test the model on brandnew data!
@@ -212,12 +238,13 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     parameters["activation output"] = activation_output
     parameters["test acc"] = acc
     parameters["test loss"] = loss
+    parameters["duration in minutes"] = duration_training
     #save in csv file
     with open('{}/{}.csv'.format(model_log_folder,modelname),'w',newline='') as f:
         w = csv.writer(f)
         w.writerows(parameters.items())
     
-    print("\n\nIf you want to implement this model, the model's name is:\n\n{}".format(modelname))
+    print("\n\nIf you want to implement this model, the model's name is:\n\n{}\n\n".format(modelname))
     
     return True
 
@@ -229,8 +256,11 @@ if __name__ == "__main__":
     model_type = "cnnlstm" # cnn, lstm, cnnlstm
     epochs = 100
     optimizer = 'adam' # 'adam' 'sgd'
-    sparse_targets = True
+    sparse_targets = True 
     patience = 5 
     
-    
-    main(model_type,epochs,optimizer,sparse_targets,patience)
+    try:
+        main(model_type,epochs,optimizer,sparse_targets,patience)
+    except UnboundLocalError as e:
+        print("\n\nERROR: {}".format(e))
+        print("\nCheck for typos in your input\n")
