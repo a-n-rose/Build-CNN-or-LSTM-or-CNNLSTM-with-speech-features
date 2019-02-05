@@ -1,6 +1,7 @@
 #save info
 import csv
 import sys
+from pathlib import Path
 
 #audio 
 import librosa
@@ -15,6 +16,8 @@ import random
 import feature_extraction_scripts.prep_noise as prep_data_vad_noise
 from feature_extraction_scripts.errors import NoSpeechDetected, LimitTooSmall,FeatureExtractionFail
 
+
+
  
 #delta
 def get_change_acceleration_rate(spectro_data):
@@ -25,25 +28,6 @@ def get_change_acceleration_rate(spectro_data):
 
     return delta, delta_delta
 
-#noise
-def apply_noise(y,sr,wavefile):
-    #at random apply varying amounts of environment noise
-    rand_scale = random.choice([0.0,0.25,0.5,0.75])
-    if rand_scale > 0.0:
-        total_length = len(y)/sr
-        y_noise,sr = librosa.load(wavefile,sr=16000)
-        envnoise_normalized = prep_data_vad_noise.normalize(y_noise)
-        envnoise_scaled = prep_data_vad_noise.scale_noise(envnoise_normalized,rand_scale)
-        envnoise_matched = prep_data_vad_noise.match_length(envnoise_scaled,sr,total_length)
-        if len(envnoise_matched) != len(y):
-            diff = int(len(y) - len(envnoise_matched))
-            if diff < 0:
-                envnoise_matched = envnoise_matched[:diff]
-            else:
-                envnoise_matched = np.append(envnoise_matched,np.zeros(diff,))
-        y += envnoise_matched
-
-    return y
     
 #load wavefile, set settings for that
 def get_samps(wavefile,sr=None,high_quality=None):
@@ -250,7 +234,7 @@ def save_feats2npy(labels_class,dict_labels_encoded,data_filename4saving,max_num
         np.save(data_filename4saving+".npy",feats_matrix)
         
     return completed
-    
+
 
 #this function feeds variables on to the feature extraction function 'get_feats' (and it shapes the data to the same size). 
 #It is also a beautiful example of why classes are great. I chose not to do a class for these functions because I thought it would be more straightforward, for a workshop setting....
@@ -264,7 +248,28 @@ def coll_feats_manage_timestep(time_step,frame_width,wav,feature_type,num_filter
         feats = feats[:max_len,:]
     
     return feats
-        
+
+#noise
+#at default applies it at varying strengths. You can set it to a certain level here:
+def apply_noise(y,sr,wavefile):
+    #at random apply varying amounts of environment noise
+    rand_scale = random.choice([0.0,0.25,0.5,0.75])
+    #rand_scale = 0.75
+    if rand_scale > 0.0:
+        total_length = len(y)/sr
+        y_noise,sr = librosa.load(wavefile,sr=16000)
+        envnoise_normalized = prep_data_vad_noise.normalize(y_noise)
+        envnoise_scaled = prep_data_vad_noise.scale_noise(envnoise_normalized,rand_scale)
+        envnoise_matched = prep_data_vad_noise.match_length(envnoise_scaled,sr,total_length)
+        if len(envnoise_matched) != len(y):
+            diff = int(len(y) - len(envnoise_matched))
+            if diff < 0:
+                envnoise_matched = envnoise_matched[:diff]
+            else:
+                envnoise_matched = np.append(envnoise_matched,np.zeros(diff,))
+        y += envnoise_matched
+
+    return y
 
 #collects the actual features, according to the settings assigned
 #such as with noise, voice activity detection/beginning silence removal, etc.
@@ -293,21 +298,21 @@ def get_feats(wavefile,feature_type,num_features,num_feature_columns,head_folder
     if "mfcc" in feature_type.lower():
         extracted.append("mfcc")
         features = get_mfcc(y,sr,num_mfcc=num_features)
-        features -= (np.mean(features, axis=0) + 1e-8)
+        #features -= (np.mean(features, axis=0) + 1e-8)
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
     elif "fbank" in feature_type.lower():
         extracted.append("fbank")
         features = get_mel_spectrogram(y,sr,num_mels = num_features)
-        features -= (np.mean(features, axis=0) + 1e-8)
+        #features -= (np.mean(features, axis=0) + 1e-8)
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
     elif "stft" in feature_type.lower():
         extracted.append("stft")
         features = get_stft(y,sr)
-        features -= (np.mean(features, axis=0) + 1e-8)
+        #features -= (np.mean(features, axis=0) + 1e-8)
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
@@ -319,3 +324,35 @@ def get_feats(wavefile,feature_type,num_features,num_feature_columns,head_folder
         raise FeatureExtractionFail("The file '{}' results in the incorrect  number of columns (should be {} columns): shape {}".format(wavefile,num_feature_columns,features.shape))
     
     return features
+
+
+#only for visualization purproses: save to png how the features look. Used in 'visualize_features.py' script
+def save2png(time_step,frame_width,wav,feature_type,num_filters,num_feature_columns,head_folder,delta=False,dom_freq=False,noise_wavefile=None,vad = True):
+    feats = coll_feats_manage_timestep(time_step,frame_width,wav,feature_type,num_filters,num_feature_columns,head_folder,delta=delta,dom_freq=dom_freq,noise_wavefile=noise_wavefile,vad = vad)
+    
+    #transpose the features to go from left to right in time:
+    feats = np.transpose(feats)
+    
+    #create graph and save to png
+    plt.clf()
+    librosa.display.specshow(feats)
+    if noise_wavefile:
+        noise = True
+    else:
+        noise = False
+    plt.title("{}: {} timesteps, frame width of {}".format(wav,time_step,frame_width))
+    plt.tight_layout(pad=0)
+    pic_path = "{}{}_vad{}_noise{}_delta{}_domfreq{}".format(feature_type,num_feature_columns,vad,noise,delta,dom_freq)
+    path = unique_path(Path(head_folder), pic_path+"{:03d}.png")
+    plt.savefig(path)
+
+    return True
+
+def unique_path(directory, name_pattern):
+    counter = 0
+    while True:
+        counter += 1
+        path = directory / name_pattern.format(counter)
+        if not path.exists():
+            return path
+
