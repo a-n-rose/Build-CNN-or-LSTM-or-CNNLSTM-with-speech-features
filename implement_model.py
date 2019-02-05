@@ -66,7 +66,7 @@ def main(project_head_folder,model_name):
     noise, sr = record_sound(4,"Recording background noise")
     speech,sr = record_sound(4,"Please say *loud and clear* one of the target words. \nRecording")
     #save sound
-    recording_folder = "./recordings"
+    recording_folder = "{}/recordings".format(head_folder_curr_project)
     if not os.path.exists(recording_folder):
         os.makedirs(recording_folder)
     
@@ -142,8 +142,8 @@ def main(project_head_folder,model_name):
 
 if __name__=="__main__":
     
-    project_head_folder = "fbank_models_4d13h1m59s"
-    model_name = "CNNLSTM_speech_commands_4d13h16m30s"
+    project_head_folder = "fbank_models_4d13h39m31s"
+    model_name = "CNNLSTM_speech_commands_4d13h41m48s"
     
     main(project_head_folder,model_name)
         
