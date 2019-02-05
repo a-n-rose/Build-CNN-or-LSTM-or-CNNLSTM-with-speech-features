@@ -8,6 +8,7 @@ Kim, Myungjong & Cao, Beiming & An, Kwanghoon & Wang, Jun. (2018). Dysarthric Sp
 import os
 import time
 import datetime
+from pathlib import Path
 
 import numpy as np
 
@@ -29,11 +30,14 @@ import model_scripts.build_model as build
 
 
 #to keep saved files unique
-#include their names with a timestamp
-def get_date():
-    time = datetime.datetime.now()
-    time_str = "{}d{}h{}m{}s".format(time.day,time.hour,time.minute,time.second)
-    return(time_str)
+def unique_path(directory, name_pattern):
+    counter = 0
+    while True:
+        counter += 1
+        path = directory / name_pattern.format(counter)
+        if not path.exists():
+            return path
+
 
 def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     if patience is None:
@@ -43,7 +47,6 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     ######################## HOUSE KEEPING ##############################
     
     start = time.time()
-    time_stamp = get_date()
     
     print("\n\nWhich folder contains the train, validation, and test datasets you would like to train this model on?\n")
     project_head_folder=input()
@@ -63,8 +66,10 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     
     #create name for model to be saved/associated with:
     #make model name unique with timestamp
-    modelname = "{}_speech_commands_{}".format(model_type.upper(),time_stamp)
-    
+    modelname = "{}_speech_commands".format(model_type.upper())
+    #update model name if the name is already taken:
+    path = unique_path(Path(models_folder), modelname+"{:03d}.hd")
+    modelname = Path(path).stem
     
     #collect variables stored during feature extraction
     load_feature_settings_file = head_folder_curr_project+"/features_log.csv".format(project_head_folder)
@@ -239,8 +244,9 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     parameters["test acc"] = acc
     parameters["test loss"] = loss
     parameters["duration in minutes"] = duration_training
-    #save in csv file
-    with open('{}/{}.csv'.format(model_log_folder,modelname),'w',newline='') as f:
+    #save in csv file w unique name
+    log_path = unique_path(Path(model_log_folder),modelname+'.csv')
+    with open(log_path,'w',newline='') as f:
         w = csv.writer(f)
         w.writerows(parameters.items())
     
