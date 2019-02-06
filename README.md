@@ -16,7 +16,7 @@ For Installation instructions, see <a href="https://github.com/a-n-rose/Build-CN
 
 ## Run
 
-After you have installed everything, start up your virtual environment:
+After you have installed everything and downloaded/ set up your data, start up your virtual environment:
 
 ```
 $ source env/bin/activate
