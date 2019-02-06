@@ -1,3 +1,10 @@
+'''
+These are a series of functions to transform the speech form from the time and amplitude domain (waveform) to the frequency and power domain (MFCC, FBAN, STFT).
+
+Note: these functions would be better set up within a Class.
+For this workshop I thought leaving them as individual functions would be more straightforward but I don't think that is the case :P 
+'''
+
 #save info
 import csv
 import sys
