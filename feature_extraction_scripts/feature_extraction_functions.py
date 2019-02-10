@@ -68,6 +68,7 @@ def get_mfcc(y,sr,num_mfcc=None,window_size=None, window_shift=None):
         hop_length = int(window_shift*0.001*sr)
     mfccs = librosa.feature.mfcc(y,sr,n_mfcc=num_mfcc,hop_length=hop_length,n_fft=n_fft)
     mfccs = np.transpose(mfccs)
+    mfccs -= (np.mean(mfccs, axis=0) + 1e-8)
     
     return mfccs
 
@@ -91,6 +92,7 @@ def get_mel_spectrogram(y,sr,num_mels = None,window_size=None, window_shift=None
         
     fbank = librosa.feature.melspectrogram(y,sr,n_fft=n_fft,hop_length=hop_length,n_mels=num_mels)
     fbank = np.transpose(fbank)
+    fbank -= (np.mean(fbank, axis=0) + 1e-8)
     
     return fbank
 
@@ -109,6 +111,7 @@ def get_stft(y,sr,window_size=None, window_shift=None):
         hop_length = int(window_shift*0.001*sr)
     stft = np.abs(librosa.stft(y,n_fft=n_fft,hop_length=hop_length)) #comes in complex numbers.. have to take absolute value
     stft = np.transpose(stft)
+    stft -= (np.mean(stft, axis=0) + 1e-8)
     
     return stft
 
@@ -120,7 +123,8 @@ def get_domfreq(y,sr):
     frequencies, magnitudes = get_freq_mag(y,sr)
     #select only frequencies with largest magnitude, i.e. dominant frequency
     dom_freq_index = [np.argmax(item) for item in magnitudes]
-    dom_freq = [frequencies[i][item] for i,item in enumerate(dom_freq_index)]
+    dom_freq = np.array([frequencies[i][item] for i,item in enumerate(dom_freq_index)])
+    #dom_freq -= (np.mean(dom_freq, axis=0) + 1e-8)
     
     return np.array(dom_freq)
 
@@ -305,21 +309,18 @@ def get_feats(wavefile,feature_type,num_features,num_feature_columns,head_folder
     if "mfcc" in feature_type.lower():
         extracted.append("mfcc")
         features = get_mfcc(y,sr,num_mfcc=num_features)
-        #features -= (np.mean(features, axis=0) + 1e-8)
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
     elif "fbank" in feature_type.lower():
         extracted.append("fbank")
         features = get_mel_spectrogram(y,sr,num_mels = num_features)
-        #features -= (np.mean(features, axis=0) + 1e-8)
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
     elif "stft" in feature_type.lower():
         extracted.append("stft")
         features = get_stft(y,sr)
-        #features -= (np.mean(features, axis=0) + 1e-8)
         if delta:
             delta, delta_delta = get_change_acceleration_rate(features)
             features = np.concatenate((features,delta,delta_delta),axis=1)
