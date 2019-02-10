@@ -1,5 +1,7 @@
 ## Extract Speech Features and Train Deep Neural Networks
 
+Inspiration for this workshop stemmed from this <a href="https://www.researchgate.net/publication/327350843_Dysarthric_Speech_Recognition_Using_Convolutional_LSTM_Neural_Network">paper</a>. I suggest downloading it as a reference.
+
 In this workshop, our goal is to experiment with speech feature extraction and the training of deep neural networks in Python. For my blog post on the features explored in this repo, click <a href="https://a-n-rose.github.io/2019/02/06/python-train-cnn-lstm-speech-features.html">here</a>.
 
 Applying deep learning to the sound/ speech signal has many uses. We all know that it helps us to speak to Siri and Alexa, but it can also be used for security purposes, as in <a href="https://www.isca-speech.org/archive/interspeech_2015/papers/i15_2097.pdf">speaker verification</a>, <a href="https://people.xiph.org/~jm/demo/rnnoise/">noise reduction</a> when digitizing sound/ speech, and also in <a href="https://www.dw.com/en/voice-analysis-an-objective-diagnostic-tool-based-on-flawed-algorithms/a-17187057">healthcare contexts</a>, for example, identifying if a person has <a href="https://reader.elsevier.com/reader/sd/pii/S0952197618302045?token=B98CE82B0BE713AAA0653D37DF51401344710FD653E675D0900D0CE77C54070FD8AFBFBE1FB174169031EF17FCA7232C">Parkinson's</a>, <a href="https://ac.els-cdn.com/S2352872915000160/1-s2.0-S2352872915000160-main.pdf?_tid=d04d9cc3-f992-4820-af98-f083c847c322&acdnat=1549408007_fe358db560e7df5618e8d68875824413">Alzheimer's</a>,<a href="https://www.theverge.com/2014/7/17/5912491/diagnosing-sound-scientists-voice-recordings-Parkinsons-ADHD-Alzheimers">ADHD</a>, or various <a href="https://www.isca-speech.org/archive/Interspeech_2018/pdfs/1351.pdf">speech disorders</a>. I could go on.
@@ -9,6 +11,21 @@ In much of the research I have read, recurring speech features used in machine a
 Additionally, deep learning neural networks I see quite often are the <a href="https://ujjwalkarn.me/2016/08/11/intuitive-explanation-convnets/">convolutional neural network</a> (CNN) and, for time series analysis, <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">long short-term memory</a> neural networks (LSTM), among others, but for this workshop, we'll stick with these.
 
 Python offers libraries for audio analysis, <a href="https://librosa.github.io/">Librosa</a>, as well as for deep learning, <a href="https://keras.io/">Keras</a>. In this workshop, we will explore speech feature extraction using Librosa and the training of neural networks via Keras.
+
+## Workshop Challenge Ideas:
+
+Get a model(s) trained on your data and implement it as well:
+* Was it successful?
+* Where does it fail?
+* What would you change to improve its performance?
+
+Change the data to answer a specific question:
+* How do the different networks handle similar sounding words?
+* Are the models more or less robust when trained with speech mixed with noise?
+
+Find a relavent paper, using STFT, FBANK, MFCCs and/or CNN, LSTM, CNN+LSTM models, and apply their methodology
+* Does their methodology also work well with your question?
+* If you change it (i.e. add noise to training data) does it improve how the model performs?
 
 ## Installation
 
