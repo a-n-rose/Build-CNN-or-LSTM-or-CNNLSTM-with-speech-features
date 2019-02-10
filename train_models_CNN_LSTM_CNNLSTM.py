@@ -114,7 +114,7 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     lstm_cells = 40
     #For the CNN:
     feature_map_filters = 30
-    kernel_size = (4,8)
+    kernel_size = (8,4)
     #maxpooling
     pool_size = (3,3)
     #hidden dense layer
