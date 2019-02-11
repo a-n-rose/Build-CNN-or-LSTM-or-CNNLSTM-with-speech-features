@@ -13,11 +13,21 @@ if __name__=="__main__":
     
     #VARIABLES FOR THE USER TO SET:
     
-    #an example wave: Sheila
-    wav = "./data/sheila/1c1060b1_nohash_0.wav"
+    #"cat"
+    #wav = "./data/cat/0e5193e6_nohash_1.wav"
+    
+    #"bird"
+    #wav = "./data/bird/0a7c2a8d_nohash_1.wav"
+    
+    #"house"
+    #wav = "./data/happy/0c5027de_nohash_0.wav"
+    
+    #"seven"
+    wav = "./data/seven/0cd323ec_nohash_0.wav"
+    
     #variables to set and see how they change the picture
     #which type of features to extract?
-    feature_type = "stft" # "mfcc" "fbank" "stft"
+    feature_type = "fbank" # "mfcc" "fbank" "stft"
     #number of filters or coefficients? If STFT, doesn't matter.. can put None
     num_filters = 40 # Options: FBANK: 40, 20 - MFCC: 40, 20, 13 - STFT: None
     if feature_type == "stft":
@@ -30,9 +40,13 @@ if __name__=="__main__":
         noise_path = "./data/_background_noise_/doing_the_dishes.wav" 
     else:
         noise_path = None
+    #NOTE: as it is, noise is applied at a scale from 0 to 0.75 
+    #you can change the scale or keep it constant to stay the same if you'd like. Change this in:
+    #function "apply_noise" which is located in the script "feature_extraction_functions.py"
     vad = True # Apply voice activity detection (removes the beginning and ending 'silence'/background noise of recordings)
     timesteps = 5
     context_window = 5
+    frame_width = context_window*2+1
     
     
     #SETTINGS THE SCRIPT ASSIGNS ITSELF
@@ -42,7 +56,7 @@ if __name__=="__main__":
         num_feature_columns = num_filters
     if dom_freq:
         num_feature_columns += 1
-    frame_width = context_window*2+1
+    
 
     #create folder to store all data (encoded labels, features)
     visuals_folder = "visualizations"
