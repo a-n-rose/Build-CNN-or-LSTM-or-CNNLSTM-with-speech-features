@@ -59,8 +59,9 @@ def save_class_labels(sorted_labels,head_folder):
     dict_labels = {}
     for i, label in enumerate(sorted_labels):
         dict_labels[i] = label
-    filename = 'labels_encoded'
-    path = unique_path(Path(head_folder), filename+"{:03d}.csv")
+    filename = '/labels_encoded'
+    #path = unique_path(Path(head_folder), filename+"{:03d}.csv")
+    path = Path(head_folder+filename+".csv")
     with open(path,'w') as f:
         w = csv.writer(f)
         w.writerows(dict_labels.items())
