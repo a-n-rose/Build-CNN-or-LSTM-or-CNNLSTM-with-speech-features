@@ -4,7 +4,7 @@ Inspiration for this workshop stemmed from this <a href="https://www.researchgat
 
 In this workshop, our goal is to experiment with speech feature extraction and the training of deep neural networks in Python. For my blog post on the features explored in this repo, click <a href="https://a-n-rose.github.io/2019/02/06/python-train-cnn-lstm-speech-features.html">here</a>.
 
-Applying deep learning to the sound/ speech signal has many uses. We all know that it helps us to speak to Siri and Alexa, but it can also be used for security purposes, as in <a href="https://www.isca-speech.org/archive/interspeech_2015/papers/i15_2097.pdf">speaker verification</a>, <a href="https://people.xiph.org/~jm/demo/rnnoise/">noise reduction</a> when digitizing sound/ speech, and also in <a href="https://www.dw.com/en/voice-analysis-an-objective-diagnostic-tool-based-on-flawed-algorithms/a-17187057">healthcare contexts</a>, for example, identifying if a person has <a href="https://reader.elsevier.com/reader/sd/pii/S0952197618302045?token=B98CE82B0BE713AAA0653D37DF51401344710FD653E675D0900D0CE77C54070FD8AFBFBE1FB174169031EF17FCA7232C">Parkinson's</a>, <a href="https://ac.els-cdn.com/S2352872915000160/1-s2.0-S2352872915000160-main.pdf?_tid=d04d9cc3-f992-4820-af98-f083c847c322&acdnat=1549408007_fe358db560e7df5618e8d68875824413">Alzheimer's</a>,<a href="https://www.theverge.com/2014/7/17/5912491/diagnosing-sound-scientists-voice-recordings-Parkinsons-ADHD-Alzheimers">ADHD</a>, or various <a href="https://www.isca-speech.org/archive/Interspeech_2018/pdfs/1351.pdf">speech disorders</a>. I could go on.
+Applying deep learning to the sound/ speech signal has many uses. We all know that it helps us to speak to Siri and Alexa, but it can also be used for security purposes, as in <a href="https://www.isca-speech.org/archive/interspeech_2015/papers/i15_2097.pdf">speaker verification</a>, <a href="https://people.xiph.org/~jm/demo/rnnoise/">noise reduction</a> when digitizing sound/ speech, and also in <a href="https://www.dw.com/en/voice-analysis-an-objective-diagnostic-tool-based-on-flawed-algorithms/a-17187057">healthcare contexts</a>, for example, identifying if a person has <a href="https://reader.elsevier.com/reader/sd/pii/S0952197618302045?token=B98CE82B0BE713AAA0653D37DF51401344710FD653E675D0900D0CE77C54070FD8AFBFBE1FB174169031EF17FCA7232C">Parkinson's</a>, <a href="https://ac.els-cdn.com/S2352872915000160/1-s2.0-S2352872915000160-main.pdf?_tid=d04d9cc3-f992-4820-af98-f083c847c322&acdnat=1549408007_fe358db560e7df5618e8d68875824413">Alzheimer's</a>, <a href="https://www.theverge.com/2014/7/17/5912491/diagnosing-sound-scientists-voice-recordings-Parkinsons-ADHD-Alzheimers">ADHD</a>, or various <a href="https://www.isca-speech.org/archive/Interspeech_2018/pdfs/1351.pdf">speech disorders</a>. I could go on.
 
 In much of the research I have read, recurring speech features used in machine and deep learning are the <a href="http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/">Mel Frequency Cepstral Coefficients</a> (MFCC), the Mel Filterbank Energies (FBANK), which are similar but less filtered than the MFCC, as well as the <a href="https://ccrma.stanford.edu/~jos/sasp/Short_Time_Fourier_Transform.html">short-time fourier transform</a> (STFT) of the raw waveform. 
 
@@ -67,7 +67,7 @@ Using TensorFlow backend.
 
 Which folder contains the train, validation, and test datasets you would like to train this model on?
 
-features_and_models_2019y2m2d22h6m19s
+features_and_models_20h32m31s
 
 ```
 
