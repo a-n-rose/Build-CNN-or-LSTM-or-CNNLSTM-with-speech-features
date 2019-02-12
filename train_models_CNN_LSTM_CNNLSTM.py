@@ -252,7 +252,7 @@ if __name__ == "__main__":
     
     model_type = "cnnlstm" # cnn, lstm, cnnlstm
     epochs = 100
-    optimizer = 'adam' # 'adam' 'sgd'
+    optimizer = 'sgd' # 'adam' 'sgd'
     sparse_targets = True 
     patience = 5 
     
