@@ -97,23 +97,14 @@ def main(model_type,epochs,optimizer,sparse_targets,patience=None):
     
 
     loss_type, activation_output = build.assign_model_settings(num_labels,sparse_targets)
-    #based on number of labels, set model settings:
-    #if only 2 labels --> 
-    #activation_output == "sigmoid"
-    #loss_type == "binary_crossentropy"
-    
-    #if more lables --> 
-    #activation_output == "softmax"
-    #loss_type == either "categorical_crossentropy" or "sparse_categorical_crossentropy"
-    #Note: sparse is for if the labels are NOT one-hot-encoded, only integer-encoded
 
 
     #build the model architecture:
     #read up on what they do and feel free to adjust!
     #For the LSTM:
-    lstm_cells = 40
+    lstm_cells = num_features #what I've noticed people implementing..
     #For the CNN:
-    feature_map_filters = 30
+    feature_map_filters = 32
     kernel_size = (8,4)
     #maxpooling
     pool_size = (3,3)
