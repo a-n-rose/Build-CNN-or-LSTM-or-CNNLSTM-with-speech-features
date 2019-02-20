@@ -1,6 +1,6 @@
 ## Extract Speech Features and Train Deep Neural Networks
 
-Inspiration for this workshop stemmed from this <a href="https://www.researchgate.net/publication/327350843_Dysarthric_Speech_Recognition_Using_Convolutional_LSTM_Neural_Network">paper</a>. I suggest downloading it as a reference.
+Inspiration for this workshop stemmed from this <a href="https://www.researchgate.net/publication/327350843_Dysarthric_Speech_Recognition_Using_Convolutional_LSTM_Neural_Network">paper</a>. I suggest downloading it as a reference. In this <a href="https://a-n-rose.github.io/2019/02/17/comparing-features-and-models-deep-learning-and-speech.html">post</a> I show via tables and graphs some experimentation results of this repo (training and implementing models w various speech features).
 
 In this workshop, our goal is to experiment with speech feature extraction and the training of deep neural networks in Python. For my blog post on the features explored in this repo, click <a href="https://a-n-rose.github.io/2019/02/06/python-train-cnn-lstm-speech-features.html">here</a>.
 
@@ -123,3 +123,20 @@ Inside of that folder you will find all of the train, validation, and train data
 ## Future Use
 
 You can explore other kinds of speech data, as well. I am collecting a list of free and available speech databases <a href="https://a-n-rose.github.io/2019/01/06/resources-publicly-available-speech-databases.html">here</a>. I offer directions for downloading a small dataset of female and male speech <a href="https://a-n-rose.github.io/2019/01/31/small-female-male-speech-data.html">here</a>. Note: in order to work with these scripts, the wavefiles need to be separated by class within the 'data' folder.
+
+## Room for Improvement
+
+1) Replicability and Randomization
+
+I wanted to quickly train and compare many models without using only the same wavefiles, some of which might really suck. Therefore, right now, wavefiles are randomly assigned to train, validation, and test datasets. While it would be easy to implement a logging function, to document each time I extract features, which wavefiles were assigned to which dataset, as I am just experimenting, I don't want to busy my computer with more and more logging files. Furthermore, the noise is applied in varying strengths (0.25, 0.5, 0.75 the original volume). This variation in scale is applied at random. 
+
+Fixes: 1) you can put together logging functionality to document the waves used in each dataset 2) assign the noise level to be just one number (I believe that's in the function "apply_noise" in the file "feature_extraction_functions.py".) 
+
+2) Mixing of Noise
+
+Right now, noise is mixed into the train, validation, and test datasets. I am exploring now if it's better to add the noise only to the train dataset. If that's the case, I will make that adjustment to the code as well.
+
+3) Records a lot of background noise
+
+I don't know if it's just my machine, but when I use sounddevice, a crazy amount of background noise is in the recording. I'm working on that.. just know if the same thing is happening to your recordings, you're not alone. And if you find a fix before I have, let me know what helped. 
+
