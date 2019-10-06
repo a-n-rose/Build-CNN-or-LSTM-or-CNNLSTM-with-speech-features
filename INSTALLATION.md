@@ -1,122 +1,161 @@
-## Installation and Data Download Instructions
+# Installation and Data Download Instructions
 
 ## Prerequisites
 
-1. Computer with CPU
+1. Computer with a good CPU,
+2. (Optional) A recording apparatus, for example headset or earphones
+   that have a microphone,
+3. Downloaded speech data (instructions below),
+4. [Python >= 3.6](https://www.python.org/downloads/).
 
-2. Optional: a recording apparatus, for example headset or earphones that have a microphone.
-
-3. Downloaded speech data (instructions below)
-
-4. [Python 3.6](https://www.python.org/downloads/release/python-368/)
-
-To check your version, type the following into the command-line:
-
-Note: I only mean the text following the '\$' sign.
-
+To check your version, type the following into a terminal:
 ```
-$ python3 --version
+python --version
 ```
-
+in some systems `python` is called `python3`, so you can also try:
+```
+python3 --version
+```
 Other versions might work. I just can't guarantee that.
+
+Hereon, remember which one worked for you, `python` or `python3`
+and use it for all the snippets you see in the instructions.
 
 ## Virtual Environment
 
-I suggest using a virtual environment. This allows you to use any package versions without them interfering with other programs on your system.
+I suggest using a virtual environment.
+This allows you to use any package versions without them interfering with
+other programs on your system.
 
-You can set up a virtual environment different ways. One way is with Python3.6-venv.
+You can set up a virtual environment different ways.
+Two ways are with the `venv` or `virtualenv` module.
 
-### Python3.6-venv
-
-To install, enter into the command line:
-
+To check if they are installed, you can run on a terminal the following
+command:
 ```
-$ sudo apt install python3.6-venv
+python -c "import venv"
+```
+and
+```
+python -c "import virtualenv"
 ```
 
-or for MacOS:
+If one of them worked, you can use it to create a virtual environment,
+otherwise you need to install one:
 
-```
-$ pip3 install virtualenv
-```
+### Installing `venv`
+Windows and macOS:
+* `pip install venv` (maybe `pip3`)
+Linux:
+* Besides using `pip`, you can install this using your OS package manager:
+ * `apt-get install python3.6-venv` (Ubuntu)
+
+### Installing `virtualenv`
+
+Same procedures are with `venv` but using `virtualenv` instead.
+
+### Creating environment
 
 In the folder where the scripts for this workshop are, write in the command-line:
 
 ```
-$ python3 -m venv env
+python -m venv env
+```
+or
+```
+virtualenv env
 ```
 
 This will create a folder 'env'.
 
-Then type into the command-line:
+### Activating the environment
 
+Simply type the following:
 ```
-$ source env/bin/activate
+source env/bin/activate
 ```
+and your virtual environment will be activated.
 
-and your virtual envioronment will be activated. Here you can install packages that will not interfere with any other programs.
+(You will be able to deactivate it by running `deactivate` on the same terminal)
 
-To deactivate this environment, simply type in the command line:
-
-```
-$ deactivate
-```
+Here you can install packages that will not interfere with any other programs.
 
 ## Installation
 
-To install all the python packages we will use, first start up your virtual environment:
-
+To install all the python packages we will use,
+remember to activate your virtual environment:
 ```
-$ source env/bin/activate
-```
-
-In your virtual environment, run 'requirements.txt' to install all necessary packages via pip. This should only take a couple of minutes.
-
-```
-(env)..$ pip install -r requirements.txt
+source env/bin/activate
 ```
 
-### OPTIONAL INSTALLATION
-
-If you also want to run 'implement_model.py', which will need to record audio, you will also need to install sounddevice and soundfile. You can do this with the following:
-
+In your virtual environment, use `requirements.txt` to install all necessary
+packages via `pip`. This should only take a couple of minutes.
 ```
-(env)..$ pip install -r requirements_implementmodel.txt
+pip install -r requirements.txt
 ```
 
-### POSSIBLE PROBLEMS WITH INSTALLATION:
+## (Optional) Installation
 
-To double check installation of matplotlib is totally fine. Open a python shell (by typing ```python```) and type:
-
+If you also want to run `implement_model.py`, which will need to record audio,
+you will also need to install `sounddevice` and `soundfile`.
+You can do this with the following:
 ```
-import matplotlib.pyplot as plt
+pip install -r requirements_implementmodel.txt
 ```
 
-If that raises an error related to tk inter, then tk inter support is missing from your python. Check [tk_tinker](https://wiki.python.org/moin/TkInter) for installation instructions or for ubuntu you can do:
+## Possible installation issues
 
+* To double check the installation of `matplotlib` execute the following
+  command, and you should not receive any error:
+
+  ```
+  python -c "import matplotlib"
+  ```
+
+  If that raises an error related to `tk` inter, then its support is missing
+  from your python.
+  Check [tk_tinker](https://wiki.python.org/moin/TkInter) for installation
+  instructions or for Ubuntu you can do:
+  ```
+  sudo apt-get install python3-tk tk-dev
+  ```
+  If that doesn't fix the issue, reinstalling python and setting up the
+  environment will be needed to make python support tk inter.
+  Check [pyenv](https://github.com/pyenv/pyenv#simple-python-version-management-pyenv)
+  for easy python version installations.
+
+## Data download
+
+### Automatic
+
+Use the `download_data.py` script to automate this process by just typing:
 ```
-$ sudo apt-get install python3-tk
-
-$ sudo apt-get install tk-dev
+python download_data.py
 ```
-If that doesn't fix the issue, reinstalling python and setting up the environment will be needed to make python support tk inter. Check [pyenv](https://github.com/pyenv/pyenv#simple-python-version-management-pyenv) for easy python version installations.
 
-## Download the Data
+### Manual
 
 1. In the directory where the workshop scripts are, create a folder called 'data'.
+2. Download the speech commands data set
+   [here](http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz).
+   Save the tar file in a folder named `data`.
+3. Extract the tar file. The data directory should look like this:
+   ![Imgur](https://i.imgur.com/fqSzLVm.png)
 
-2. Download the speech commands dataset <a href="http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz">here</a>. Save the zip folder in the folder named 'data'.
+If instead you have a folder `speech_commands_0.01`,
+move the folders within that folder up one level.
 
-3. Extract the zipfile. The data directory should look like this:
+### Possible problems with the downloaded file
 
-![Imgur](https://i.imgur.com/fqSzLVm.png)
-
-If instead you have a folder 'speech_commands_0.01', move the folders within that folder up one level. 
-
-### POSSIBLE PROBLEMS WITH DOWNLOAD:
-
-If you have trouble unzipping this file, try installing <a href="https://www.7-zip.org/">7-zip</a>. Then use that to unzip the file.
+If you have trouble unzipping the file,
+try installing [7-zip](https://www.7-zip.org/).
+Then use that to unzip the file.
 
 ## Other Data Options
 
-You are welcome to use other data. I have instructions <a href="https://a-n-rose.github.io/2019/01/31/small-female-male-speech-data.html">here</a> for downloading female and male speech data from an online speech database. Ensure that the contents of the 'data' folder look like the picture above (with the folder names matching the classes of the data you want to use, e.g. "male_speech" and "female_speech").
+You are welcome to use other data sets.
+I have instructions [here](https://a-n-rose.github.io/2019/01/31/small-female-male-speech-data.html)
+for downloading female and male speech data from an online speech database.
+Ensure that the contents of the `data` folder look like the picture above
+(with the folder names matching the classes of the data you want to use,
+e.g. `male_speech` and `female_speech`).
